@@ -19,14 +19,14 @@ matrix:
         - eval "PATH=${PATH}:$HOME/.local/bin"
         - pip install --user cpplint
       script:
-        - (cd liblightcone && ./configure && make lint && make && make test)
+        - (cd lightcone && ./configure && make lint && make && make test)
 
     # OSX
     - language: cpp
       os: osx
       osx_image: xcode9
       script:
-        - (cd liblightcone && ./configure && make && make test)
+        - (cd lightcone && ./configure && make && make test)
 
 notifications:
   email: false
