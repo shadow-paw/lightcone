@@ -198,6 +198,7 @@ LDLIBS  =$LDLIBS
 LIBFLAGS=$LIBFLAGS
 CWARN   =$CWARN
 CXXWARN =$CXXWARN
+CPPLINTFLAGS=--filter=-legal/copyright,-build/include_subdir,-build/c++11,-readability/todo --linelength=200
 
 
 # PHONY
@@ -231,24 +232,26 @@ MakePath:
 
 MakeLib: MakePath \$(LIB_FILE_OUT)
 \$(LIB_FILE_OUT): Makefile \$(LIB_FILE_O)
-	@echo [LIB ] \$@
+	@echo "[LIB ] \$@"
 	@\$(LIBTOOL) \$(LIBFLAGS) \$@ \$(LIB_FILE_O)
 	@echo ;
 
 \$(LIB_PATH_BUILD)%_c.o: \$(LIB_PATH_SRC)%.c Makefile
-	@echo [GCC ] \$<
+	@echo "[CC  ] \$<"
 	@\$(CC) \$(CFLAGS) \$(CWARN) -I\$(LIB_PATH_HEADER) -c \$< -o \$@
 
 \$(LIB_PATH_BUILD)%.o: \$(LIB_PATH_SRC)%.cpp Makefile
-	@echo [CXX ] \$<
+	@echo "[CXX ] \$<"
 	@\$(CXX) \$(CXXFLAGS) \$(CXXWARN) -I\$(LIB_PATH_HEADER) -c \$< -o \$@
 
-lint: \$(LIB_FILE_CPP)
-	@cpplint --quiet --filter=-legal/copyright,-build/include_subdir --linelength=160 \$(LIB_FILE_CPP)
+lint: testlint
+	@echo "[LINT]"
+	@cpplint \$(CPPLINTFLAGS) \$(LIB_FILE_CPP) \$(LIB_FILE_H)
 
 # Unit Test
 #################################################
-TEST_FILE_CPP := \$(wildcard \$(LIB_PATH_TEST)*.cpp)
+TEST_INCLUDE=\$(LIB_PATH_HEADER)../
+TEST_FILE_CPP := \$(sort \$(wildcard \$(LIB_PATH_TEST)*.cpp))
 TEST_FILE_PROG:= \$(patsubst \$(LIB_PATH_TEST)%.cpp,\$(LIB_PATH_BUILD)%_t.test,\$(TEST_FILE_CPP))
 TEST_FILE_DEPT:= \$(patsubst %.test,%.d,\$(TEST_FILE_PROG))
 
@@ -262,8 +265,12 @@ test: MakePath \$(TEST_FILE_PROG)
 	if [ "\$\$rc" != "0" ]; then false; fi
 
 \$(LIB_PATH_BUILD)%_t.test: \$(LIB_PATH_TEST)%.cpp Makefile \$(LIB_FILE_OUT)
-	@echo [CXX ] \$<
-	@\$(CXX) \$(CXXFLAGS) \$(LDFLAGS) -I\$(LIB_PATH_HEADER) \$< \$(LIB_FILE_OUT) \$(LDLIBS) -o \$@
+	@echo "[CXX ] \$<"
+	@\$(CXX) \$(CXXFLAGS) \$(LDFLAGS) -I\$(TEST_INCLUDE) \$< \$(LIB_FILE_OUT) \$(LDLIBS) -o \$@
+
+testlint:
+	@echo "[LINT]"
+	@cpplint \$(CPPLINTFLAGS) \$(TEST_FILE_CPP)
 
 
 # Misc
