@@ -2,11 +2,8 @@
 #include <atomic>
 #include "lightcone/lightcone.h"
 
-using lightcone::Threads;
-using lightcone::MessageQueue;
-
 // -----------------------------------------------------------
-class TestThreads : public Threads {
+class TestThreads : public lightcone::Threads {
  public:
     std::atomic<int> spawned;
     std::atomic<int> check;
@@ -28,7 +25,7 @@ class TestThreads : public Threads {
 // -----------------------------------------------------------
 bool queue_access() {
     const int queue_size = 1024;
-    MessageQueue<int> queue;
+    lightcone::MessageQueue<int> queue;
     // fill queue, note the -1 because one slot is "reading"
     for (int i=0; i < queue_size; i++) {
         if (!queue.post(i)) return false;
@@ -49,7 +46,7 @@ bool threads_spawn() {
     if (!threads.start(8)) return false;
     for (int i=0; ; i++) {
         if (threads.spawned == 8) break;
-        Threads::msleep(10);
+        lightcone::Threads::msleep(10);
         if (i >= 100 * 5) return false;  // 5sec
     }
     threads.stop();

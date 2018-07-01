@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include "lightcone/lightcone.h"
 
-using lightcone::Beacon;
-using lightcone::SockAddr;
-using lightcone::Threads;
-using lightcone::Network;
-
 // -----------------------------------------------------------
-class BeaconServer : public Beacon {
+class BeaconServer : public lightcone::Beacon {
  public:
     bool ready, peerup, peerdown;
     BeaconServer() {
@@ -22,11 +17,11 @@ class BeaconServer : public Beacon {
         ready = true;
         return true;
     }
-    bool cb_beacon_peerup(uint32_t type, uint32_t id, const SockAddr& addr) {
+    bool cb_beacon_peerup(uint32_t type, uint32_t id, const lightcone::SockAddr& addr) {
         peerup = true;
         return true;
     }
-    bool cb_beacon_peerdown(uint32_t type, uint32_t id, const SockAddr& addr) {
+    bool cb_beacon_peerdown(uint32_t type, uint32_t id, const lightcone::SockAddr& addr) {
         peerdown = true;
         return true;
     }
@@ -45,7 +40,7 @@ bool test_discovery() {
             result = true;
             break;
         }
-        Threads::msleep(10);
+        lightcone::Threads::msleep(10);
     }
     bob.stop();
     alice.stop();
@@ -58,9 +53,9 @@ bool run_tests() {
 }
 // -----------------------------------------------------------
 int main(int argc, char* argv[]) {
-    Network::start();
+    lightcone::Network::start();
     bool success = run_tests();
-    Network::stop();
+    lightcone::Network::stop();
     return success ? 0 : 1;
 }
 // -----------------------------------------------------------

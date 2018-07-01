@@ -2,11 +2,9 @@
 #include <utility>
 #include "lightcone/lightcone.h"
 
-using lightcone::Buffer;
-
 // -----------------------------------------------------------
 bool buffer_access() {
-    Buffer buf;
+    lightcone::Buffer buf;
     uint8_t *p = nullptr;
     const size_t size = 4096;
     // init buffer with sequential bytes
@@ -39,7 +37,7 @@ bool buffer_access() {
 }
 // -----------------------------------------------------------
 bool buffer_copy() {
-    Buffer buf1, buf2;
+    lightcone::Buffer buf1, buf2;
     uint8_t *p = nullptr;
     const size_t size = 4096;
     if (!buf1.reserve_begin(&p, size)) return false;
@@ -56,7 +54,7 @@ bool buffer_copy() {
 }
 // -----------------------------------------------------------
 bool buffer_move() {
-    Buffer buf1, buf2;
+    lightcone::Buffer buf1, buf2;
     uint8_t *p = nullptr;
     const size_t size = 4096;
     if (!buf1.reserve_begin(&p, size)) return false;

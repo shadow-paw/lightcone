@@ -1,14 +1,10 @@
 #include <stdio.h>
 #include "lightcone/lightcone.h"
 
-using lightcone::Network;
-using lightcone::SockAddr;
-using lightcone::Udp;
-
 // -----------------------------------------------------------
 bool udp_pingpong() {
-    Udp udp1, udp2;
-    SockAddr bindaddr;
+    lightcone::Udp udp1, udp2;
+    lightcone::SockAddr bindaddr;
     if (!udp1.open(true) || !udp2.open(true)) return false;
     if (!bindaddr.ip4("0.0.0.0", 8888)) return false;
     if (!udp1.bind(bindaddr, true)) return false;
@@ -16,7 +12,7 @@ bool udp_pingpong() {
         const char payload[] = "HELLO";
         udp2.send(bindaddr, payload, sizeof(payload));
         char rbuf[8192];
-        SockAddr sender;
+        lightcone::SockAddr sender;
         ssize_t rlen = udp1.recv(&sender, rbuf, sizeof(rbuf), 1000);
         if (rlen > 0) return true;
     }
@@ -24,8 +20,8 @@ bool udp_pingpong() {
 }
 // -----------------------------------------------------------
 bool udp_mcast() {
-    Udp udp1, udp2;
-    SockAddr addr;
+    lightcone::Udp udp1, udp2;
+    lightcone::SockAddr addr;
     if (!addr.ip4("239.0.0.4", 8888)) return false;
     if (!udp1.open(true) || !udp2.open(true)) return false;
     if (!udp1.bind(addr, true)) return false;
@@ -34,7 +30,7 @@ bool udp_mcast() {
         const char payload[] = "HELLO";
         udp2.send(addr, payload, sizeof(payload));
         char rbuf[8192];
-        SockAddr sender;
+        lightcone::SockAddr sender;
         ssize_t rlen = udp1.recv(&sender, rbuf, sizeof(rbuf), 1000);
         if (rlen > 0) return true;
     }
@@ -48,9 +44,9 @@ bool run_tests() {
 }
 // -----------------------------------------------------------
 int main(int argc, char* argv[]) {
-    Network::start();
+    lightcone::Network::start();
     bool success = run_tests();
-    Network::stop();
+    lightcone::Network::stop();
     return success ? 0 : 1;
 }
 // -----------------------------------------------------------
