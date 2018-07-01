@@ -256,10 +256,11 @@ TEST_FILE_PROG:= \$(patsubst \$(LIB_PATH_TEST)%.cpp,\$(LIB_PATH_BUILD)%_t.test,\
 TEST_FILE_DEPT:= \$(patsubst %.test,%.d,\$(TEST_FILE_PROG))
 
 test: MakePath \$(TEST_FILE_PROG)
-	-@rc=0; count=0; \\
+	@rc=0; count=0; \\
 	for file in \$(TEST_FILE_PROG); do \\
-	    echo "[TEST] \$\$file"; ./\$\$file; \\
-	    rc=\`expr \$\$rc + \$\$?\`; count=\`expr \$\$count + 1\`; \\
+	    echo "[TEST] \$\$file"; \\
+	    if ! ./\$\$file; then rc=\`expr \$\$rc + 1\`; fi; \\
+	    count=\`expr \$\$count + 1\`; \\
 	done; \\
 	echo "Tests executed: \$\$count  Tests failed: \$\$rc"; \\
 	if [ "\$\$rc" != "0" ]; then false; fi
@@ -276,7 +277,7 @@ testlint:
 # Misc
 #################################################
 clean:
-	@rm \$(LIB_FILE_O) \$(LIB_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
+	@-rm \$(LIB_FILE_O) \$(LIB_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
 
 doc:
 	@doxygen

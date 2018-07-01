@@ -31,11 +31,7 @@ bool Udp::bind(const SockAddr& addr, bool reuse) {
     if (reuse) {
         if (!m_socket.set_reuse()) return false;
     }
-    if (!m_socket.bind(addr)) return false;
-    if (addr.is_multicast()) {
-        if (!mcast_join(addr)) return false;
-    }
-    return true;
+    return m_socket.bind(addr);
 }
 // -----------------------------------------------------------
 bool Udp::bind(const std::string& addr, int port, bool reuse) {
@@ -56,6 +52,7 @@ ssize_t Udp::send(const SockAddr& addr, const void* buf, size_t len) {
 }
 // -----------------------------------------------------------
 ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout) {
+    if (!m_socket.is_valid()) return -1;
     fd_set rfds;
     struct timeval tv;
     tv.tv_sec = timeout / 1000;
@@ -74,7 +71,7 @@ ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout)
 #endif
 }
 // -----------------------------------------------------------
-bool Udp::mcast_join(const SockAddr& addr) {
+bool Udp::joinmcast(const SockAddr& addr) {
     struct sockaddr a = addr;
     switch (a.sa_family) {
     case AF_INET: {
