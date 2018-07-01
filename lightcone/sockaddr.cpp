@@ -2,8 +2,7 @@
 #include <stdexcept>
 #include "sockaddr.h"
 
-using lightcone::SockAddr;
-
+namespace lightcone {
 // -----------------------------------------------------------
 SockAddr::SockAddr(const std::string& ip, int port) {
     if (ip.find(".") != std::string::npos) {
@@ -159,3 +158,4 @@ uint32_t SockAddr::hash() const {
     } return ret;
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

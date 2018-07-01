@@ -2,9 +2,7 @@
 #include <utility>
 #include "tcp.h"
 
-using lightcone::Tcp;
-using lightcone::SockAddr;
-
+namespace lightcone {
 // -----------------------------------------------------------
 Tcp::Tcp() {
     m_managed = false;
@@ -240,3 +238,4 @@ bool Tcp::io_write() {
     return true;
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

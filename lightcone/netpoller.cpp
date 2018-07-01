@@ -1,7 +1,6 @@
 #include "netpoller.h"
 
-using lightcone::NetPoller;
-
+namespace lightcone {
 // -----------------------------------------------------------
 NetPoller::NetPoller() {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
@@ -211,3 +210,4 @@ bool NetPoller::poll(unsigned int milliseconds, std::function<bool(const RAW_SOC
 #endif
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

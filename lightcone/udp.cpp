@@ -1,8 +1,7 @@
 #include <string.h>
 #include "udp.h"
 
-using lightcone::Udp;
-
+namespace lightcone {
 // -----------------------------------------------------------
 Udp::Udp(Udp&& o) {
     m_socket = std::move(o.m_socket);
@@ -92,3 +91,4 @@ bool Udp::joinmcast(const SockAddr& addr) {
     return false;
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

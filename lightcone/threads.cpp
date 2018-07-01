@@ -1,7 +1,6 @@
 #include "threads.h"
 
-using lightcone::Threads;
-
+namespace lightcone {
 // -----------------------------------------------------------
 Threads::Threads() {
     m_threads_count = 0;
@@ -46,3 +45,4 @@ void Threads::stub(Threads* self, unsigned int id) {
     self->worker(id, &self->m_threads[id].runflag);
 }
 // -----------------------------------------------------------
+}  // namespace lightcone
