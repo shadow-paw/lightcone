@@ -2,10 +2,8 @@
 #include <stdexcept>
 #include "sockaddr.h"
 
-using lightcone::SockAddr;
-
 // -----------------------------------------------------------
-SockAddr::SockAddr(const std::string& ip, int port) {
+lightcone::SockAddr::SockAddr(const std::string& ip, int port) {
     if (ip.find(".") != std::string::npos) {
         if (!ip4(ip, port)) throw std::invalid_argument("ip");
     } else {
@@ -13,29 +11,29 @@ SockAddr::SockAddr(const std::string& ip, int port) {
     }
 }
 // -----------------------------------------------------------
-SockAddr::SockAddr(const struct sockaddr& o) {
+lightcone::SockAddr::SockAddr(const struct sockaddr& o) {
     m_addr = o;
 }
 // -----------------------------------------------------------
-SockAddr::SockAddr(const SockAddr& o) {
+lightcone::SockAddr::SockAddr(const lightcone::SockAddr& o) {
     m_addr = o.m_addr;
 }
 // -----------------------------------------------------------
-SockAddr::SockAddr(SockAddr&& o) {
+lightcone::SockAddr::SockAddr(lightcone::SockAddr&& o) {
     m_addr = o.m_addr;
 }
 // -----------------------------------------------------------
-SockAddr& SockAddr::operator=(const SockAddr& o) {
-    m_addr = o.m_addr;
-    return *this;
-}
-// -----------------------------------------------------------
-SockAddr& SockAddr::operator=(SockAddr&& o) {
+lightcone::SockAddr& lightcone::SockAddr::operator=(const lightcone::SockAddr& o) {
     m_addr = o.m_addr;
     return *this;
 }
 // -----------------------------------------------------------
-uint32_t SockAddr::get_ip4() const {
+lightcone::SockAddr& lightcone::SockAddr::operator=(lightcone::SockAddr&& o) {
+    m_addr = o.m_addr;
+    return *this;
+}
+// -----------------------------------------------------------
+uint32_t lightcone::SockAddr::get_ip4() const {
     switch (m_addr.sa_family) {
     case AF_INET: {
             uint32_t ip4;
@@ -45,7 +43,7 @@ uint32_t SockAddr::get_ip4() const {
     } return 0;
 }
 // -----------------------------------------------------------
-int SockAddr::get_port() const {
+int lightcone::SockAddr::get_port() const {
     switch (m_addr.sa_family) {
     case AF_INET: {
             const struct sockaddr& a = m_addr;
@@ -62,7 +60,7 @@ int SockAddr::get_port() const {
     }
 }
 // -----------------------------------------------------------
-void SockAddr::set_port(int port) {
+void lightcone::SockAddr::set_port(int port) {
     switch (m_addr.sa_family) {
     case AF_INET: {
             struct sockaddr& a = m_addr;
@@ -77,7 +75,7 @@ void SockAddr::set_port(int port) {
     }
 }
 // -----------------------------------------------------------
-std::string SockAddr::to_string() const {
+std::string lightcone::SockAddr::to_string() const {
     char buffer[INET_ADDRSTRLEN] = {};
     int port = 0;
     switch (m_addr.sa_family) {
@@ -100,7 +98,7 @@ std::string SockAddr::to_string() const {
     } return std::string(buffer) + ":" + std::to_string(port);
 }
 // -----------------------------------------------------------
-bool SockAddr::ip4(const std::string& ip, int port) {
+bool lightcone::SockAddr::ip4(const std::string& ip, int port) {
     struct sockaddr_in* sa = reinterpret_cast<struct sockaddr_in*>(&m_addr);
     if (inet_pton(AF_INET, ip.c_str(), &sa->sin_addr) != 1) return false;
     sa->sin_family = AF_INET;
@@ -108,7 +106,7 @@ bool SockAddr::ip4(const std::string& ip, int port) {
     return true;
 }
 // -----------------------------------------------------------
-bool SockAddr::ip6(const std::string& ip, int port) {
+bool lightcone::SockAddr::ip6(const std::string& ip, int port) {
     struct sockaddr_in6* sa = reinterpret_cast<struct sockaddr_in6*>(&m_addr);
     if (inet_pton(AF_INET6, ip.c_str(), &sa->sin6_addr) != 1) return false;
     sa->sin6_family = AF_INET6;
@@ -116,7 +114,7 @@ bool SockAddr::ip6(const std::string& ip, int port) {
     return true;
 }
 // -----------------------------------------------------------
-bool SockAddr::resolve(const std::string& host, int default_port) {
+bool lightcone::SockAddr::resolve(const std::string& host, int default_port) {
     struct addrinfo hints = {};
     struct addrinfo* addrs = nullptr;
     hints.ai_family = AF_UNSPEC;
@@ -137,7 +135,7 @@ bool SockAddr::resolve(const std::string& host, int default_port) {
     return true;
 }
 // -----------------------------------------------------------
-bool SockAddr::is_multicast() const {
+bool lightcone::SockAddr::is_multicast() const {
     switch (m_addr.sa_family) {
     case AF_INET:
         return ((unsigned char)m_addr.sa_data[2] & 0xf0) == 0xe0;  // 224~239
@@ -146,7 +144,7 @@ bool SockAddr::is_multicast() const {
     } return false;
 }
 // -----------------------------------------------------------
-uint32_t SockAddr::hash() const {
+uint32_t lightcone::SockAddr::hash() const {
     uint32_t ret = 0;
     switch (m_addr.sa_family) {
     case AF_INET:

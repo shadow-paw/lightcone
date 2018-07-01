@@ -1,10 +1,8 @@
 #include <signal.h>
 #include "network.h"
 
-using lightcone::Network;
-
 // -----------------------------------------------------------
-void Network::start() {
+void lightcone::Network::start() {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     WSADATA wsad;
     WSAStartup(MAKEWORD(1, 1), &wsad);
@@ -15,7 +13,7 @@ void Network::start() {
 #endif
 }
 // -----------------------------------------------------------
-void Network::stop() {
+void lightcone::Network::stop() {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     WSACleanup();
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)

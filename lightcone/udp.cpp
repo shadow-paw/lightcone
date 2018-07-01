@@ -1,19 +1,17 @@
 #include <string.h>
 #include "udp.h"
 
-using lightcone::Udp;
-
 // -----------------------------------------------------------
-Udp::Udp(Udp&& o) {
+lightcone::Udp::Udp(lightcone::Udp&& o) {
     m_socket = std::move(o.m_socket);
 }
 // -----------------------------------------------------------
-Udp& Udp::operator=(Udp&& o) {
+lightcone::Udp& lightcone::Udp::operator=(lightcone::Udp&& o) {
     m_socket = std::move(o.m_socket);
     return *this;
 }
 // -----------------------------------------------------------
-bool Udp::open(bool nonblocking) {
+bool lightcone::Udp::open(bool nonblocking) {
     if (m_socket.is_valid()) return false;
     if (!m_socket.init(SOCK_DGRAM, IPPROTO_UDP)) return false;
     if (!m_socket.set_nonblocking(nonblocking)) {
@@ -22,11 +20,11 @@ bool Udp::open(bool nonblocking) {
     } return true;
 }
 // -----------------------------------------------------------
-void Udp::close() {
+void lightcone::Udp::close() {
     m_socket.close();
 }
 // -----------------------------------------------------------
-bool Udp::bind(const SockAddr& addr, bool reuse) {
+bool lightcone::Udp::bind(const lightcone::SockAddr& addr, bool reuse) {
     if (!m_socket.is_valid()) return false;
     if (reuse) {
         if (!m_socket.set_reuse()) return false;
@@ -34,13 +32,13 @@ bool Udp::bind(const SockAddr& addr, bool reuse) {
     return m_socket.bind(addr);
 }
 // -----------------------------------------------------------
-bool Udp::bind(const std::string& addr, int port, bool reuse) {
+bool lightcone::Udp::bind(const std::string& addr, int port, bool reuse) {
     SockAddr a;
     if (!a.resolve(addr, port)) return false;
     return bind(a, reuse);
 }
 // -----------------------------------------------------------
-ssize_t Udp::send(const SockAddr& addr, const void* buf, size_t len) {
+ssize_t lightcone::Udp::send(const lightcone::SockAddr& addr, const void* buf, size_t len) {
     struct sockaddr a = addr;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     return (ssize_t)sendto(m_socket, (const char*)buf, reinterpret_cast<int>(len), 0, &a, sizeof(struct sockaddr));
@@ -51,7 +49,7 @@ ssize_t Udp::send(const SockAddr& addr, const void* buf, size_t len) {
 #endif
 }
 // -----------------------------------------------------------
-ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout) {
+ssize_t lightcone::Udp::recv(lightcone::SockAddr* sender, void* buf, size_t len, unsigned int timeout) {
     if (!m_socket.is_valid()) return -1;
     fd_set rfds;
     struct timeval tv;
@@ -71,7 +69,7 @@ ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout)
 #endif
 }
 // -----------------------------------------------------------
-bool Udp::joinmcast(const SockAddr& addr) {
+bool lightcone::Udp::joinmcast(const lightcone::SockAddr& addr) {
     struct sockaddr a = addr;
     switch (a.sa_family) {
     case AF_INET: {

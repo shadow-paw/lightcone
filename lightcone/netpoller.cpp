@@ -1,9 +1,7 @@
 #include "netpoller.h"
 
-using lightcone::NetPoller;
-
 // -----------------------------------------------------------
-NetPoller::NetPoller() {
+lightcone::NetPoller::NetPoller() {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
 #elif LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_EPOLL
     m_queue = 0;
@@ -18,12 +16,12 @@ NetPoller::NetPoller() {
 #endif
 }
 // -----------------------------------------------------------
-NetPoller::~NetPoller() {
+lightcone::NetPoller::~NetPoller() {
     fini();
 }
 // -----------------------------------------------------------
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_KQUEUE
-bool NetPoller::ensure_changes_size(int size) {
+bool lightcone::NetPoller::ensure_changes_size(int size) {
     if ( size > m_changes_capacity ) {
         struct kevent* p = (struct kevent*)realloc(m_changes, ((size_t)size+16)*sizeof(struct kevent));
         if (!p) return false;
@@ -33,7 +31,7 @@ bool NetPoller::ensure_changes_size(int size) {
 }
 #endif
 // -----------------------------------------------------------
-bool NetPoller::init() {
+bool lightcone::NetPoller::init() {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     return true;
 #elif LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_EPOLL
@@ -55,7 +53,7 @@ bool NetPoller::init() {
 #endif
 }
 // -----------------------------------------------------------
-void NetPoller::fini() {
+void lightcone::NetPoller::fini() {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
 #elif LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_EPOLL
     if (m_queue) { close(m_queue); m_queue = 0; }
@@ -70,7 +68,7 @@ void NetPoller::fini() {
 #endif
 }
 // -----------------------------------------------------------
-bool NetPoller::add(const RAW_SOCKET& fd, int event, void* ud) {
+bool lightcone::NetPoller::add(const RAW_SOCKET& fd, int event, void* ud) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     if (fd >= FD_SETSIZE) return false;
     m_list.push_back(SelectItem{fd, event, ud});
@@ -97,7 +95,7 @@ bool NetPoller::add(const RAW_SOCKET& fd, int event, void* ud) {
 #endif
 }
 // -----------------------------------------------------------
-bool NetPoller::remove(const RAW_SOCKET& fd) {
+bool lightcone::NetPoller::remove(const RAW_SOCKET& fd) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     for (auto it=m_list.begin(); it != m_list.end(); ++it) {
         if (it->fd == fd) {
@@ -121,7 +119,7 @@ bool NetPoller::remove(const RAW_SOCKET& fd) {
 #endif
 }
 // -----------------------------------------------------------
-bool NetPoller::modify(const RAW_SOCKET& fd, int event, void* ud) {
+bool lightcone::NetPoller::modify(const RAW_SOCKET& fd, int event, void* ud) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     for (auto it=m_list.begin(); it != m_list.end(); ++it) {
         if (it->fd == fd) {
@@ -147,7 +145,7 @@ bool NetPoller::modify(const RAW_SOCKET& fd, int event, void* ud) {
 #endif
 }
 // -----------------------------------------------------------
-bool NetPoller::poll(unsigned int milliseconds, std::function<bool(const RAW_SOCKET& fd, int event, void* ud)> cb) {
+bool lightcone::NetPoller::poll(unsigned int milliseconds, std::function<bool(const RAW_SOCKET& fd, int event, void* ud)> cb) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     fd_set rfds, wfds, efds;
     RAW_SOCKET maxfd = 0;

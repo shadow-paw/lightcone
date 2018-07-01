@@ -3,35 +3,28 @@
 #include "netengine.h"
 #include "netpoller.h"
 
-using lightcone::NetEngine;
-using lightcone::LoadBalancer;
-using lightcone::Threads;
-using lightcone::Tcp;
-using lightcone::NetPoller;
-using lightcone::Calendar;
-
 // -----------------------------------------------------------
-NetEngine::NetEngine(LoadBalancer<uint32_t>* lb) {
+lightcone::NetEngine::NetEngine(lightcone::LoadBalancer<uint32_t>* lb) {
     m_lb = lb;
     m_timeout = 0;
 }
 // -----------------------------------------------------------
-void NetEngine::set_timeout(uint64_t timeout) {
+void lightcone::NetEngine::set_timeout(uint64_t timeout) {
     m_timeout = timeout;
 }
 // -----------------------------------------------------------
-bool NetEngine::start(int num_worker) {
+bool lightcone::NetEngine::start(int num_worker) {
     if (num_worker <= 0 || num_worker > kMaxWorker) return false;
     m_lb->setup(1, num_worker);
-    return Threads::start((unsigned int)(num_worker+1));  // +1 for listen thread
+    return lightcone::Threads::start((unsigned int)(num_worker+1));  // +1 for listen thread
 }
 // -----------------------------------------------------------
-void NetEngine::stop() {
-    Threads::stop();
+void lightcone::NetEngine::stop() {
+    lightcone::Threads::stop();
 }
 // -----------------------------------------------------------
-bool NetEngine::listen(const SockAddr& addr, const Tcp::UserData* ud) {
-    Tcp* conn = new Tcp();
+bool lightcone::NetEngine::listen(const lightcone::SockAddr& addr, const lightcone::Tcp::UserData* ud) {
+    auto conn = new lightcone::Tcp();
     if (conn == nullptr) return false;
     if (ud) conn->ud = *ud;
     if (!conn->listen(addr, true)) {
@@ -45,8 +38,8 @@ bool NetEngine::listen(const SockAddr& addr, const Tcp::UserData* ud) {
     }
 }
 // -----------------------------------------------------------
-bool NetEngine::connect(const SockAddr& addr, const Tcp::UserData* ud) {
-    Tcp* conn = new Tcp();
+bool lightcone::NetEngine::connect(const lightcone::SockAddr& addr, const lightcone::Tcp::UserData* ud) {
+    auto conn = new lightcone::Tcp();
     if (conn == nullptr) return false;
     if (ud) conn->ud = *ud;
     if (!conn->connect(addr, true)) {
@@ -62,7 +55,7 @@ bool NetEngine::connect(const SockAddr& addr, const Tcp::UserData* ud) {
     }
 }
 // -----------------------------------------------------------
-void NetEngine::worker(unsigned int id, bool* runflag) {
+void lightcone::NetEngine::worker(unsigned int id, bool* runflag) {
     if (id == 0) {
         worker_listen(id, runflag);
     } else {
@@ -70,8 +63,8 @@ void NetEngine::worker(unsigned int id, bool* runflag) {
     }
 }
 // -----------------------------------------------------------
-void NetEngine::worker_listen(unsigned int id, bool* runflag) {
-    NetPoller poller;
+void lightcone::NetEngine::worker_listen(unsigned int id, bool* runflag) {
+    lightcone::NetPoller poller;
     std::list<Tcp*> sockets;
     if (!poller.init()) return;
 
@@ -91,9 +84,9 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
         }
         // Poll for event, accept socket and dispatch to worker.
         poller.poll(100, [this](const RAW_SOCKET& fd, int ev, void* ud) -> bool {
-            Tcp* listener = static_cast<Tcp*>(ud);
-            Tcp* accepted;
-            SockAddr remote;
+            lightcone::Tcp* listener = static_cast<lightcone::Tcp*>(ud);
+            lightcone::Tcp* accepted;
+            lightcone::SockAddr remote;
             while ((accepted = listener->accept(&remote))!= nullptr) {
                 accepted->set_nonblocking(true);
                 accepted->m_managed = true;
@@ -107,7 +100,7 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
         });
     }
     {
-        Tcp* conn;
+        lightcone::Tcp* conn;
         // Kill unprocessed sockets
         while (m_inbox[id].get(&conn, 0)) {
             delete conn;
@@ -119,22 +112,22 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
     }
 }
 // -----------------------------------------------------------
-void NetEngine::worker_socket(unsigned int id, bool* runflag) {
-    NetPoller poller;
-    std::list<Tcp*> sockets;
+void lightcone::NetEngine::worker_socket(unsigned int id, bool* runflag) {
+    lightcone::NetPoller poller;
+    std::list<lightcone::Tcp*> sockets;
     if (!poller.init()) return;
 
     while (*runflag) {
         // Take sockets from inbox
         {
-            Tcp* newconn = nullptr;
+            lightcone::Tcp* newconn = nullptr;
             while (m_inbox[id].get(&newconn, 0)) {
                 sockets.push_back(newconn);
-                if (newconn->m_state == Tcp::State::Connnecting) {
-                    newconn->m_evmask = NetPoller::kWrite;
-                    poller.add(newconn->m_socket, NetPoller::kReadWrite, newconn);
+                if (newconn->m_state == lightcone::Tcp::State::Connnecting) {
+                    newconn->m_evmask = lightcone::NetPoller::kWrite;
+                    poller.add(newconn->m_socket, lightcone::NetPoller::kReadWrite, newconn);
                 } else {
-                    poller.add(newconn->m_socket, NetPoller::kRead, newconn);
+                    poller.add(newconn->m_socket, lightcone::NetPoller::kRead, newconn);
                 }
             }
         }
@@ -144,7 +137,7 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
             continue;
         }
 
-        auto now = Calendar::now();
+        auto now = lightcone::Calendar::now();
         auto timeout = m_timeout;
 
         // Walk socket list
@@ -191,25 +184,25 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
                     conn->m_atime = now;
                 }
                 if (conn->m_obuf.size() > 0) {
-                    if ((conn->m_evmask & NetPoller::kWrite) == 0) {
-                        conn->m_evmask |= NetPoller::kWrite;
-                        poller.modify(conn->m_socket, NetPoller::kReadWrite, conn);
+                    if ((conn->m_evmask & lightcone::NetPoller::kWrite) == 0) {
+                        conn->m_evmask |= lightcone::NetPoller::kWrite;
+                        poller.modify(conn->m_socket, lightcone::NetPoller::kReadWrite, conn);
                     }
                 } else {
-                    if ((conn->m_evmask & NetPoller::kWrite) != 0) {
-                        conn->m_evmask ^= NetPoller::kWrite;
-                        poller.modify(conn->m_socket, NetPoller::kRead, conn);
+                    if ((conn->m_evmask & lightcone::NetPoller::kWrite) != 0) {
+                        conn->m_evmask ^= lightcone::NetPoller::kWrite;
+                        poller.modify(conn->m_socket, lightcone::NetPoller::kRead, conn);
                     }
                 }
             }
         }
         // Wait for events
         poller.poll(100, [this, now](const RAW_SOCKET& fd, int event, void* ud) -> bool {
-            Tcp* conn = static_cast<Tcp*>(ud);
-            if (event & NetPoller::kWrite) {
+            lightcone::Tcp* conn = static_cast<lightcone::Tcp*>(ud);
+            if (event & lightcone::NetPoller::kWrite) {
                 conn->m_atime = now;
-                if (conn->m_state == Tcp::State::Connnecting) {
-                    conn->m_state = Tcp::State::Connected;
+                if (conn->m_state == lightcone::Tcp::State::Connnecting) {
+                    conn->m_state = lightcone::Tcp::State::Connected;
                     if (!cb_net_opened(conn, now)) {
                         conn->close();
                         return true;
@@ -223,7 +216,7 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
                     }
                 }
             }
-            if (event & NetPoller::kRead) {
+            if (event & lightcone::NetPoller::kRead) {
                 conn->m_atime = now;
                 conn->io_read();
                 if (conn->m_ibuf.size() > 0) {
@@ -238,7 +231,7 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
     }  // runflag
 
     {
-        Tcp* conn;
+        lightcone::Tcp* conn;
         // Kill unprocessed sockets
         while (m_inbox[id].get(&conn, 0)) {
             delete conn;

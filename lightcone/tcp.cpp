@@ -2,27 +2,24 @@
 #include <utility>
 #include "tcp.h"
 
-using lightcone::Tcp;
-using lightcone::SockAddr;
-
 // -----------------------------------------------------------
-Tcp::Tcp() {
+lightcone::Tcp::Tcp() {
     m_managed = false;
     m_state = State::Uninitalized;
     m_evmask = 0;
 }
 // -----------------------------------------------------------
-Tcp::~Tcp() {
+lightcone::Tcp::~Tcp() {
 }
 // -----------------------------------------------------------
-Tcp::Tcp(Tcp&& o) {
+lightcone::Tcp::Tcp(lightcone::Tcp&& o) {
     m_socket = std::move(o.m_socket);
     m_ibuf = std::move(o.m_ibuf);
     m_obuf = std::move(o.m_obuf);
     m_state = o.m_state; o.m_state = State::Uninitalized;
 }
 // -----------------------------------------------------------
-Tcp& Tcp::operator=(Tcp&& o) {
+lightcone::Tcp& lightcone::Tcp::operator=(lightcone::Tcp&& o) {
     m_socket = std::move(o.m_socket);
     m_ibuf = std::move(o.m_ibuf);
     m_obuf = std::move(o.m_obuf);
@@ -30,19 +27,19 @@ Tcp& Tcp::operator=(Tcp&& o) {
     return *this;
 }
 // -----------------------------------------------------------
-bool Tcp::set_nonblocking(bool b) {
+bool lightcone::Tcp::set_nonblocking(bool b) {
     return m_socket.set_nonblocking(b);
 }
 // -----------------------------------------------------------
-SockAddr Tcp::get_local() const {
+lightcone::SockAddr lightcone::Tcp::get_local() const {
     return m_socket.get_local();
 }
 // -----------------------------------------------------------
-SockAddr Tcp::get_remote() const {
+lightcone::SockAddr lightcone::Tcp::get_remote() const {
     return m_socket.get_remote();
 }
 // -----------------------------------------------------------
-bool Tcp::listen(const SockAddr& addr, bool reuse) {
+bool lightcone::Tcp::listen(const lightcone::SockAddr& addr, bool reuse) {
     if (m_socket.is_valid()) return false;
     if (!m_socket.init(SOCK_STREAM, IPPROTO_TCP)) return false;
     if (!m_socket.set_nonblocking(true)) goto fail;
@@ -60,11 +57,11 @@ fail:
     return false;
 }
 // -----------------------------------------------------------
-Tcp* Tcp::accept(SockAddr* addr, std::function<bool(const SockAddr& addr)> firewall) {
-    Tcp* ret = nullptr;
-    m_socket.accept(addr, [&ret, firewall](Socket&& accepted, const SockAddr& a) -> bool {
+lightcone::Tcp* lightcone::Tcp::accept(lightcone::SockAddr* addr, std::function<bool(const lightcone::SockAddr& addr)> firewall) {
+    lightcone::Tcp* ret = nullptr;
+    m_socket.accept(addr, [&ret, firewall](lightcone::Socket&& accepted, const lightcone::SockAddr& a) -> bool {
         if (firewall && !firewall(a)) return false;
-        ret = new Tcp();
+        ret = new lightcone::Tcp();
         ret->m_socket = std::move(accepted);
         ret->m_state = State::Accepted;
         return true;
@@ -72,7 +69,7 @@ Tcp* Tcp::accept(SockAddr* addr, std::function<bool(const SockAddr& addr)> firew
     return ret;
 }
 // -----------------------------------------------------------
-bool Tcp::connect(const SockAddr& addr, bool nonblocking, std::function<void(bool success)> cb) {
+bool lightcone::Tcp::connect(const lightcone::SockAddr& addr, bool nonblocking, std::function<void(bool success)> cb) {
     if (m_socket.is_valid()) return false;
     m_ibuf.free();
     m_obuf.free();
@@ -98,13 +95,13 @@ fail:
     return false;
 }
 // -----------------------------------------------------------
-bool Tcp::connect(const std::string& hostname, int port, bool nonblocking, std::function<void(bool success)> cb) {
+bool lightcone::Tcp::connect(const std::string& hostname, int port, bool nonblocking, std::function<void(bool success)> cb) {
     SockAddr addr;
     if (!addr.resolve(hostname, port)) return false;
     return connect(addr, nonblocking, cb);
 }
 // -----------------------------------------------------------
-void Tcp::close() {
+void lightcone::Tcp::close() {
     if (m_managed) {
         if (m_state == State::Connnecting) {
             m_state = State::Refused;
@@ -123,7 +120,7 @@ void Tcp::close() {
     }
 }
 // -----------------------------------------------------------
-bool Tcp::send(const std::string& data) {
+bool lightcone::Tcp::send(const std::string& data) {
     uint8_t* wbuf = nullptr;
     size_t datalen = data.length();
     if (!m_obuf.reserve_begin(&wbuf, datalen)) return false;
@@ -132,7 +129,7 @@ bool Tcp::send(const std::string& data) {
     return true;
 }
 // -----------------------------------------------------------
-bool Tcp::send(const void* data, size_t datalen) {
+bool lightcone::Tcp::send(const void* data, size_t datalen) {
     uint8_t* wbuf = nullptr;
     if (!m_obuf.reserve_begin(&wbuf, datalen)) return false;
     memcpy(wbuf, data, datalen);
@@ -140,14 +137,14 @@ bool Tcp::send(const void* data, size_t datalen) {
     return true;
 }
 // -----------------------------------------------------------
-bool Tcp::send(size_t reserve_size, std::function<size_t(uint8_t* wbuf, size_t wlen)> cb) {
+bool lightcone::Tcp::send(size_t reserve_size, std::function<size_t(uint8_t* wbuf, size_t wlen)> cb) {
     uint8_t* wbuf = nullptr;
     if (!m_obuf.reserve_begin(&wbuf, reserve_size)) return false;
     m_obuf.reserve_end(cb(wbuf, reserve_size));
     return true;
 }
 // -----------------------------------------------------------
-bool Tcp::recv(std::function<size_t(const uint8_t* rbuf, size_t rlen)> cb) {
+bool lightcone::Tcp::recv(std::function<size_t(const uint8_t* rbuf, size_t rlen)> cb) {
     size_t size = m_ibuf.size();
     if (size > 0) {
         size_t processed = cb(m_ibuf, size);
@@ -155,7 +152,7 @@ bool Tcp::recv(std::function<size_t(const uint8_t* rbuf, size_t rlen)> cb) {
     } return true;
 }
 // -----------------------------------------------------------
-int Tcp::poll(unsigned int milliseconds) {
+int lightcone::Tcp::poll(unsigned int milliseconds) {
     if (m_managed) return 0;
     if (!m_socket.is_valid()) return -1;
     fd_set rfds, wfds;
@@ -174,7 +171,7 @@ int Tcp::poll(unsigned int milliseconds) {
     return 1;
 }
 // -----------------------------------------------------------
-bool Tcp::io_read() {
+bool lightcone::Tcp::io_read() {
     const size_t kRecvChunkSize = 8192;
     uint8_t* rbuf;
     size_t rlen = 0;
@@ -210,7 +207,7 @@ bool Tcp::io_read() {
     return rlen > 0;
 }
 // -----------------------------------------------------------
-bool Tcp::io_write() {
+bool lightcone::Tcp::io_write() {
     uint8_t* wbuf;
     size_t wlen;
     ssize_t len;

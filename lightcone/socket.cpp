@@ -1,32 +1,29 @@
 #include "socket.h"
 
-using lightcone::Socket;
-using lightcone::SockAddr;
-
 // -----------------------------------------------------------
-Socket::Socket() {
+lightcone::Socket::Socket() {
     m_fd = INVALID_SOCKET;
 }
 // -----------------------------------------------------------
-Socket::~Socket() {
+lightcone::Socket::~Socket() {
     close();
 }
 // -----------------------------------------------------------
-Socket::Socket(const RAW_SOCKET& o) {
+lightcone::Socket::Socket(const RAW_SOCKET& o) {
     m_fd = o;
 }
 // -----------------------------------------------------------
-Socket::Socket(Socket&& o) {
+lightcone::Socket::Socket(lightcone::Socket&& o) {
     m_fd = o.m_fd; o.m_fd = INVALID_SOCKET;
 }
 // -----------------------------------------------------------
-Socket& Socket::operator=(Socket&& o) {
+lightcone::Socket& lightcone::Socket::operator=(lightcone::Socket&& o) {
     close();
     m_fd = o.m_fd; o.m_fd = INVALID_SOCKET;
     return *this;
 }
 // -----------------------------------------------------------
-bool Socket::init(int type, int proto) {
+bool lightcone::Socket::init(int type, int proto) {
     if (m_fd != INVALID_SOCKET) return false;
     m_fd = ::socket(AF_INET, type, proto);
     if (m_fd == INVALID_SOCKET) return false;
@@ -37,36 +34,36 @@ bool Socket::init(int type, int proto) {
     return true;
 }
 // -----------------------------------------------------------
-bool Socket::bind(const SockAddr& addr) {
+bool lightcone::Socket::bind(const lightcone::SockAddr& addr) {
     struct sockaddr a = addr;
     return ::bind(m_fd, &a, sizeof(struct sockaddr)) == 0;
 }
 // -----------------------------------------------------------
-bool Socket::listen() {
+bool lightcone::Socket::listen() {
     return ::listen(m_fd, 128) == 0;
 }
 // -----------------------------------------------------------
-bool Socket::accept(SockAddr* addr, std::function<bool(Socket&& accepted, const SockAddr& addr)> handler) {
+bool lightcone::Socket::accept(lightcone::SockAddr* addr, std::function<bool(lightcone::Socket&& accepted, const lightcone::SockAddr& addr)> handler) {
     struct sockaddr a;
     socklen_t slen = sizeof(a);
     RAW_SOCKET fd = ::accept(m_fd, &a, &slen);
     if (fd == INVALID_SOCKET) return false;
-    Socket accepted(fd);
+    lightcone::Socket accepted(fd);
     if (addr) {
-        *addr = SockAddr(a);
+        *addr = lightcone::SockAddr(a);
         if (handler) handler(std::move(accepted), *addr);
     } else {
-        if (handler) handler(std::move(accepted), SockAddr(a));
+        if (handler) handler(std::move(accepted), lightcone::SockAddr(a));
     }
     return true;
 }
 // -----------------------------------------------------------
-bool Socket::connect(const SockAddr& addr) {
+bool lightcone::Socket::connect(const lightcone::SockAddr& addr) {
     struct sockaddr a = addr;
     return ::connect(m_fd, &a, sizeof(struct sockaddr)) == 0;
 }
 // -----------------------------------------------------------
-void Socket::close() {
+void lightcone::Socket::close() {
     if (m_fd != INVALID_SOCKET) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
         ::closesocket(m_fd);
@@ -75,11 +72,11 @@ void Socket::close() {
 #else
     #error Not Implemented!
 #endif
-    m_fd = INVALID_SOCKET;
+        m_fd = INVALID_SOCKET;
     }
 }
 // -----------------------------------------------------------
-SockAddr Socket::get_local() const {
+lightcone::SockAddr lightcone::Socket::get_local() const {
     SockAddr addr;
     if (m_fd == INVALID_SOCKET) return addr;
     socklen_t slen = sizeof(struct sockaddr);
@@ -87,15 +84,15 @@ SockAddr Socket::get_local() const {
     return addr;
 }
 // -----------------------------------------------------------
-SockAddr Socket::get_remote() const {
-    SockAddr addr;
+lightcone::SockAddr lightcone::Socket::get_remote() const {
+    lightcone::SockAddr addr;
     if (m_fd == INVALID_SOCKET) return addr;
     socklen_t slen = sizeof(struct sockaddr);
     if (getpeername(m_fd, &addr.operator struct sockaddr&(), &slen) != 0) return addr;
     return addr;
 }
 // -----------------------------------------------------------
-bool Socket::set_nonblocking(bool b) {
+bool lightcone::Socket::set_nonblocking(bool b) {
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     uint64_t a = b ? 1 : 0;
@@ -112,7 +109,7 @@ bool Socket::set_nonblocking(bool b) {
     return true;
 }
 // -----------------------------------------------------------
-bool Socket::set_reuse() {
+bool lightcone::Socket::set_reuse() {
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     int opt = 1;
@@ -132,7 +129,7 @@ bool Socket::set_reuse() {
 #endif
 }
 // -----------------------------------------------------------
-bool Socket::is_error() const {
+bool lightcone::Socket::is_error() const {
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     switch (WSAGetLastError()) {

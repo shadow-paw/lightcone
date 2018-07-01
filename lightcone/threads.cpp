@@ -1,29 +1,27 @@
 #include "threads.h"
 
-using lightcone::Threads;
-
 // -----------------------------------------------------------
-Threads::Threads() {
+lightcone::Threads::Threads() {
     m_threads_count = 0;
 }
 // -----------------------------------------------------------
-Threads::~Threads() {
+lightcone::Threads::~Threads() {
     stop();
 }
 // -----------------------------------------------------------
-void Threads::sleep(unsigned int seconds) {
+void lightcone::Threads::sleep(unsigned int seconds) {
     std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
 // -----------------------------------------------------------
-void Threads::msleep(unsigned int milliseconds) {
+void lightcone::Threads::msleep(unsigned int milliseconds) {
     std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 // -----------------------------------------------------------
-void Threads::usleep(unsigned int usec) {
+void lightcone::Threads::usleep(unsigned int usec) {
     std::this_thread::sleep_for(std::chrono::microseconds(usec));
 }
 // -----------------------------------------------------------
-bool Threads::start(unsigned int num) {
+bool lightcone::Threads::start(unsigned int num) {
     if (num <= 0 || num > kMaxThreads) return false;
     m_threads_count = num;
     for (unsigned int i=0; i < num; i++) {
@@ -32,7 +30,7 @@ bool Threads::start(unsigned int num) {
     } return true;
 }
 // -----------------------------------------------------------
-void Threads::stop() {
+void lightcone::Threads::stop() {
     for (unsigned int i=0; i < m_threads_count; i++) {
         m_threads[i].runflag = false;
     }
@@ -42,7 +40,7 @@ void Threads::stop() {
     m_threads_count = 0;
 }
 // -----------------------------------------------------------
-void Threads::stub(Threads* self, unsigned int id) {
+void lightcone::Threads::stub(lightcone::Threads* self, unsigned int id) {
     self->worker(id, &self->m_threads[id].runflag);
 }
 // -----------------------------------------------------------
