@@ -22,9 +22,10 @@ class Udp : private NonCopyable<Udp> {
     Udp& operator=(Udp&& o);
 
     //! Initialize with socket()
+    //! \param[in] domain AF_INET or AF_INET6
     //! \param[in] nonblocking Make socket as non-blocking
     //! \return true on success, false on fail with no side-effect.
-    bool open(bool nonblocking);
+    bool open(int domain, bool nonblocking);
     //! Close the socket.
     void close();
     //! wrapper to bind
