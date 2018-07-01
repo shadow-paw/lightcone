@@ -24,9 +24,9 @@ Socket& Socket::operator=(Socket&& o) {
     return *this;
 }
 // -----------------------------------------------------------
-bool Socket::init(int type, int proto) {
+bool Socket::init(int domain, int type, int proto) {
     if (m_fd != INVALID_SOCKET) return false;
-    m_fd = ::socket(AF_INET, type, proto);
+    m_fd = ::socket(domain, type, proto);
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS)
     int v = 1;
@@ -36,8 +36,8 @@ bool Socket::init(int type, int proto) {
 }
 // -----------------------------------------------------------
 bool Socket::bind(const SockAddr& addr) {
-    struct sockaddr a = addr;
-    return ::bind(m_fd, &a, sizeof(struct sockaddr)) == 0;
+    auto p = addr.get_addr();
+    return ::bind(m_fd, p.first, p.second) == 0;
 }
 // -----------------------------------------------------------
 bool Socket::listen() {
@@ -60,8 +60,8 @@ bool Socket::accept(SockAddr* addr, std::function<bool(Socket&& accepted, const 
 }
 // -----------------------------------------------------------
 bool Socket::connect(const SockAddr& addr) {
-    struct sockaddr a = addr;
-    return ::connect(m_fd, &a, sizeof(struct sockaddr)) == 0;
+    auto p = addr.get_addr();
+    return ::connect(m_fd, p.first, p.second) == 0;
 }
 // -----------------------------------------------------------
 void Socket::close() {
@@ -80,16 +80,16 @@ void Socket::close() {
 SockAddr Socket::get_local() const {
     SockAddr addr;
     if (m_fd == INVALID_SOCKET) return addr;
-    socklen_t slen = sizeof(struct sockaddr);
-    if (getsockname(m_fd, &addr.operator struct sockaddr&(), &slen) != 0) return addr;
+    socklen_t slen = sizeof(addr.m_addr);
+    if (getsockname(m_fd, &addr.m_addr.base, &slen) != 0) return addr;
     return addr;
 }
 // -----------------------------------------------------------
 SockAddr Socket::get_remote() const {
     SockAddr addr;
     if (m_fd == INVALID_SOCKET) return addr;
-    socklen_t slen = sizeof(struct sockaddr);
-    if (getpeername(m_fd, &addr.operator struct sockaddr&(), &slen) != 0) return addr;
+    socklen_t slen = sizeof(addr.m_addr);
+    if (getpeername(m_fd, &addr.m_addr.base, &slen) != 0) return addr;
     return addr;
 }
 // -----------------------------------------------------------

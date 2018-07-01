@@ -35,10 +35,11 @@ class Socket : private NonCopyable<Socket> {
     operator const RAW_SOCKET& () const { return m_fd; }
 
     //! Initialize socket
+    //! \param[in] domain AF_INET or AF_INET6
     //! \param[in] type socket type as in bsd socket() function, e.g. SOCK_STREAM
     //! \param[in] proto socket protocol as in bsd socket() function, e.g. IPPROTO_TCP
     //! \return true on success, false on fail with no side-effect.
-    bool init(int type, int proto);
+    bool init(int domain, int type, int proto);
     //! Check if socket is valid
     //! \return true if initialized, false otherwise.
     bool is_valid() const { return m_fd != INVALID_SOCKET; }
