@@ -33,7 +33,8 @@ class Udp : private NonCopyable<Udp> {
     //! \return true on success, false on fail with no side-effect.
     bool bind(const SockAddr& addr, bool reuse);
     //! wrapper to bind
-    //! \param[in] addr Address and port to bind
+    //! \param[in] addr Address to bind
+    //! \param[in] port Pport to bind
     //! \param[in] reuse true to allow listen to same port
     //! \return true on success, false on fail with no side-effect.
     bool bind(const std::string& addr, int port, bool reuse);
@@ -50,9 +51,9 @@ class Udp : private NonCopyable<Udp> {
     //! \param[in] timeout to wait for incoming data, in milliseconds
     //! \return number of byte received, negative value on failure.
     ssize_t recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout = 0);
-
- private:
-    bool mcast_join(const SockAddr& addr);
+    //! join multicast group
+    //! \param[in] addr Address and port to join
+    bool joinmcast(const SockAddr& addr);
 
  private:
     Socket m_socket;
