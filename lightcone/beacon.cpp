@@ -3,15 +3,10 @@
 #include "byteorder.h"
 #include "calendar.h"
 
-using lightcone::ByteOrder;
-using lightcone::Beacon;
-using lightcone::SockAddr;
-using lightcone::Threads;
-using lightcone::Calendar;
-
 #define CMD_BEACON (0)
 #define CMD_RESERVEID (1)
 
+namespace lightcone {
 // -----------------------------------------------------------
 Beacon::Beacon() {
     m_app = 0;
@@ -84,9 +79,9 @@ bool Beacon::send_reserveid(uint32_t id) {
 }
 // -----------------------------------------------------------
 bool Beacon::service_update(const SockAddr& addr, uint32_t type, uint32_t id) {
+    auto now = Calendar::now();
     uint32_t ip = addr.get_ip4();
     int port = addr.get_port();
-    auto now = Calendar::now();
     m_services_mutex.lock();
     for (auto it=m_services.begin(); it != m_services.end(); ++it) {
         if (it->type != type || it->id != id) continue;
@@ -222,4 +217,4 @@ bool Beacon::remove_peer(const SockAddr& addr) {
     return service_remove(addr);
 }
 // -----------------------------------------------------------
-
+}  // namespace lightcone

@@ -3,13 +3,7 @@
 #include "netengine.h"
 #include "netpoller.h"
 
-using lightcone::NetEngine;
-using lightcone::LoadBalancer;
-using lightcone::Threads;
-using lightcone::Tcp;
-using lightcone::NetPoller;
-using lightcone::Calendar;
-
+namespace lightcone {
 // -----------------------------------------------------------
 NetEngine::NetEngine(LoadBalancer<uint32_t>* lb) {
     m_lb = lb;
@@ -250,3 +244,4 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
     }
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

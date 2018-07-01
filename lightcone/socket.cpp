@@ -1,8 +1,6 @@
 #include "socket.h"
 
-using lightcone::Socket;
-using lightcone::SockAddr;
-
+namespace lightcone {
 // -----------------------------------------------------------
 Socket::Socket() {
     m_fd = INVALID_SOCKET;
@@ -75,7 +73,7 @@ void Socket::close() {
 #else
     #error Not Implemented!
 #endif
-    m_fd = INVALID_SOCKET;
+        m_fd = INVALID_SOCKET;
     }
 }
 // -----------------------------------------------------------
@@ -171,3 +169,4 @@ bool Socket::is_error() const {
 #endif
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

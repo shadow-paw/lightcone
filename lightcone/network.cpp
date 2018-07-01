@@ -1,8 +1,7 @@
 #include <signal.h>
 #include "network.h"
 
-using lightcone::Network;
-
+namespace lightcone {
 // -----------------------------------------------------------
 void Network::start() {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
@@ -25,3 +24,4 @@ void Network::stop() {
 #endif
 }
 // -----------------------------------------------------------
+}  // namespace lightcone

@@ -4,8 +4,7 @@
 #include <new>
 #include <stdexcept>
 
-using lightcone::Buffer;
-
+namespace lightcone {
 // -----------------------------------------------------------
 Buffer::Buffer() {
     m_buffer = nullptr;
@@ -54,7 +53,7 @@ bool Buffer::realloc(size_t size) {
     // pad size to 16 bytes
     size = (((size + 15) >> 4) << 4);
     if (m_allocated < size) {
-        uint8_t* p = reinterpret_cast<uint8_t*>(::realloc(m_buffer, size));
+        uint8_t* p = static_cast<uint8_t*>(::realloc(m_buffer, size));
         if (!p) return false;
         m_buffer = p;
         m_allocated = size;
@@ -102,3 +101,4 @@ bool Buffer::trim_tail(size_t size) {
     return true;
 }
 // -----------------------------------------------------------
+}  // namespace lightcone
