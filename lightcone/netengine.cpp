@@ -1,6 +1,5 @@
-#include <ctime>
-#include <chrono>
 #include <list>
+#include "calendar.h"
 #include "netengine.h"
 #include "netpoller.h"
 
@@ -9,16 +8,12 @@ using lightcone::LoadBalancer;
 using lightcone::Threads;
 using lightcone::Tcp;
 using lightcone::NetPoller;
+using lightcone::Calendar;
 
 // -----------------------------------------------------------
 NetEngine::NetEngine(LoadBalancer<uint32_t>* lb) {
     m_lb = lb;
     m_timeout = 0;
-}
-// -----------------------------------------------------------
-uint64_t NetEngine::current_time() const {
-    return (uint64_t) std::chrono::duration_cast<std::chrono::milliseconds>
-           (std::chrono::system_clock::now().time_since_epoch()).count();
 }
 // -----------------------------------------------------------
 void NetEngine::set_timeout(uint64_t timeout) {
@@ -149,7 +144,7 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
             continue;
         }
 
-        auto now = current_time();
+        auto now = Calendar::now();
         auto timeout = m_timeout;
 
         // Walk socket list

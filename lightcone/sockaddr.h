@@ -23,7 +23,7 @@ class SockAddr {
     explicit SockAddr(const struct sockaddr& o);
     //! copy constructor
     //! \param[in] o Object to copy
-    explicit SockAddr(const SockAddr& o);
+    SockAddr(const SockAddr& o);
     //! move constructor
     //! \param[in] o Object to move
     SockAddr(SockAddr&& o);
@@ -38,6 +38,9 @@ class SockAddr {
     operator struct sockaddr& () { return m_addr; }
     operator const struct sockaddr& () const { return m_addr; }
 
+    void set_port(int port);
+    int get_port() const;
+    uint32_t get_ip4() const;
     //! Convert to printable string
     //! \return printable string, e.g. "12.34.56.78:1234"
     std::string to_string() const;
@@ -48,17 +51,17 @@ class SockAddr {
     //! \param[in] ip ipv4 address, e.g. "12.34.56.78"
     //! \param[in] port port number, e.g. 80
     //! \return true on success, false on fail with no side-effect.
-    bool ipv4(const std::string& ip, int port);
+    bool ip4(const std::string& ip, int port);
     //! Set ipv6 address with inet_pton
     //! \param[in] ip ipv6 address, e.g. "0:0:0:0:0:0:0:1"
     //! \param[in] port port number, e.g. 80
     //! \return true on success, false on fail with no side-effect.
-    bool ipv6(const std::string& ip, int port);
+    bool ip6(const std::string& ip, int port);
     //! Resolve address in blocking mode.
-    //! \param[in] hostname hostname, e.g. "www.example.com"
+    //! \param[in] host hostname with an optional port, e.g. "www.example.com:80"
     //! \param[in] port port number, e.g. 80
     //! \return true on success, false on fail with no side-effect.
-    bool resolve(const std::string& hostname, int port);
+    bool resolve(const std::string& host, int default_port);
     //! Return a hash based on remote address
     //! \return hash based on remote address
     uint32_t hash() const;

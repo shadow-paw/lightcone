@@ -60,7 +60,6 @@ class NetEngine : protected Threads, private NonCopyable<NetEngine> {
     virtual void worker(unsigned int id, bool* runflag);
     void worker_listen(unsigned int id, bool* runflag);
     void worker_socket(unsigned int id, bool* runflag);
-    uint64_t current_time() const;
 
  private:
     static const int kMaxWorker = 128;
