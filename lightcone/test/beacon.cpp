@@ -30,9 +30,9 @@ class BeaconServer : public lightcone::Beacon {
 bool test_discovery() {
     bool result = false;
     BeaconServer alice, bob;
-    const char mcast_addr[] = "239.0.0.4";
-    if (!alice.init(mcast_addr, 8888, 1234, 1, 6000, 100, 5000)) return false;
-    if (!bob.init(mcast_addr, 8888, 1234, 1, 6001, 100, 5000)) return false;
+    lightcone::SockAddr mcast_addr("239.0.0.4", 8888);
+    if (!alice.init(mcast_addr, 1234, 1, 6000, 100, 5000)) return false;
+    if (!bob.init(mcast_addr, 1234, 1, 6001, 100, 5000)) return false;
     alice.start();
     bob.start();
     for (int i=0; i < 100*10; i++) {
@@ -50,9 +50,9 @@ bool test_discovery() {
 bool test_discovery6() {
     bool result = false;
     BeaconServer alice, bob;
-    const char mcast_addr[] = "FF05:0:0:0:0:0:0:2";
-    if (!alice.init(mcast_addr, 8888, 1234, 1, 7000, 100, 5000)) return false;
-    if (!bob.init(mcast_addr, 8888, 1234, 1, 7001, 100, 5000)) return false;
+    lightcone::SockAddr mcast_addr("ff05:0:0:0:0:0:0:2", 8888);
+    if (!alice.init(mcast_addr, 1234, 1, 7000, 100, 5000)) return false;
+    if (!bob.init(mcast_addr, 1234, 1, 7001, 100, 5000)) return false;
     alice.start();
     bob.start();
     for (int i=0; i < 100*10; i++) {

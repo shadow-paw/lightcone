@@ -24,10 +24,13 @@ void NetEngine::stop() {
     Threads::stop();
 }
 // -----------------------------------------------------------
-bool NetEngine::listen(const SockAddr& addr, const Tcp::UserData* ud) {
+bool NetEngine::listen(const SockAddr& addr, std::function<bool(Tcp*)> initializer) {
     Tcp* conn = new Tcp();
     if (conn == nullptr) return false;
-    if (ud) conn->ud = *ud;
+    if (initializer && !initializer(conn)) {
+        delete conn;
+        return false;
+    }
     if (!conn->listen(addr, true)) {
         delete conn;
         return false;
@@ -39,10 +42,13 @@ bool NetEngine::listen(const SockAddr& addr, const Tcp::UserData* ud) {
     }
 }
 // -----------------------------------------------------------
-bool NetEngine::connect(const SockAddr& addr, const Tcp::UserData* ud) {
+bool NetEngine::connect(const SockAddr& addr, std::function<bool(Tcp*)> initializer) {
     Tcp* conn = new Tcp();
     if (conn == nullptr) return false;
-    if (ud) conn->ud = *ud;
+    if (initializer && !initializer(conn)) {
+        delete conn;
+        return false;
+    }
     if (!conn->connect(addr, true)) {
         delete conn;
         return false;

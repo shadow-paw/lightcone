@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <list>
 #include <mutex>
+#include <string>
 #include "copyable.h"
 #include "udp.h"
 #include "sockaddr.h"
@@ -18,15 +19,14 @@ class Beacon : private NonCopyable<Beacon>, private Threads {
     virtual ~Beacon() = default;
 
     //! Setup beacon parameters
-    //! \param[in] ip multicast ip, e.g. 239.0.0.1, FF05:0:0:0:0:0:0:2
-    //! \param[in] port udp port
+    //! \param[in] mcast_addr multicast address and port, e.g. 239.0.0.1, FF05:0:0:0:0:0:0:2
     //! \param[in] application_code Application defined code, this is used to filter beacon from different application.
     //! \param[in] service_code     Each application can have many services.
     //! \param[in] service_port     The port of such service.
     //! \param[in] interval         Beacon interval, in ms.
     //! \param[in] timeout          Timeout, in ms, for keep-alive.
     //! \return true on success, false on fail.
-    bool init(const char* ip, int port,
+    bool init(const SockAddr& mcast_addr,
              uint32_t app, uint32_t service_type, uint32_t service_port,
              uint64_t interval, uint64_t timeout);
     //! Start server

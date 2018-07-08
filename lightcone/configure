@@ -198,12 +198,10 @@ LDLIBS  =$LDLIBS
 LIBFLAGS=$LIBFLAGS
 CWARN   =$CWARN
 CXXWARN =$CXXWARN
-CPPLINTFLAGS=--filter=-legal/copyright,-build/include_subdir,-build/c++11,-readability/todo --linelength=200
+CPPLINTFLAGS=--quiet --filter=-legal/copyright,-build/include_subdir,-build/c++11,-readability/todo --linelength=200
 
 
-# PHONY
-########################
-.PHONY: all MakeLib clean test doc dist
+.PHONY: all MakeLib clean test lint lint-lib lint-test doc dist
 all: MakeLib
 
 
@@ -244,8 +242,8 @@ MakeLib: MakePath \$(LIB_FILE_OUT)
 	@echo "[CXX ] \$<"
 	@\$(CXX) \$(CXXFLAGS) \$(CXXWARN) -I\$(LIB_PATH_HEADER) -c \$< -o \$@
 
-lint: testlint
-	@echo "[LINT]"
+lint-lib:
+	@echo "[LINT] library"
 	@cpplint \$(CPPLINTFLAGS) \$(LIB_FILE_CPP) \$(LIB_FILE_H)
 
 # Unit Test
@@ -269,13 +267,14 @@ test: MakePath \$(TEST_FILE_PROG)
 	@echo "[CXX ] \$<"
 	@\$(CXX) \$(CXXFLAGS) \$(LDFLAGS) -I\$(TEST_INCLUDE) \$< \$(LIB_FILE_OUT) \$(LDLIBS) -o \$@
 
-testlint:
-	@echo "[LINT]"
+lint-test:
+	@echo "[LINT] tests"
 	@cpplint \$(CPPLINTFLAGS) \$(TEST_FILE_CPP)
 
 
 # Misc
 #################################################
+lint: lint-lib lint-test
 clean:
 	@-rm \$(LIB_FILE_O) \$(LIB_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
 

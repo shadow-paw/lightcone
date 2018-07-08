@@ -19,7 +19,7 @@ Beacon::Beacon() {
     m_beacon_interval = m_beacon_timeout = 1000;
 }
 // -----------------------------------------------------------
-bool Beacon::init(const char* ip, int port,
+bool Beacon::init(const SockAddr& mcast_addr,
                   uint32_t app, uint32_t service_type, uint32_t service_port,
                   uint64_t interval, uint64_t timeout) {
     m_app             = app;
@@ -31,22 +31,18 @@ bool Beacon::init(const char* ip, int port,
     m_beacon_interval = interval;
     m_beacon_timeout  = timeout;
     m_collided        = true;
-    if (ip && ip[0]) {
-        if (!m_bcaddr.set_ip(ip, port)) return false;
-    } else {
-        return false;
-    }
+    m_bcaddr = mcast_addr;
     SockAddr inaddr;
-    if (m_bcaddr.is_ip4()) {
+    if (mcast_addr.is_ip4()) {
         inaddr.set_ip4("0.0.0.0", m_bcaddr.get_port());
-    } else if (m_bcaddr.is_ip6()) {
+    } else if (mcast_addr.is_ip6()) {
         inaddr.set_ip6("::", m_bcaddr.get_port());
     } else {
         return false;
     }
     if (!m_udp.open(inaddr.get_domain(), true)) return false;
     if (!m_udp.bind(inaddr, true)) return false;
-    if (!m_udp.joinmcast(m_bcaddr)) return false;
+    if (!m_udp.joinmcast(mcast_addr)) return false;
     return true;
 }
 // -----------------------------------------------------------
