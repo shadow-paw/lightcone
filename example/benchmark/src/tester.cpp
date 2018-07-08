@@ -64,6 +64,7 @@ bool Tester::cb_net_accepted(lightcone::Tcp* conn, uint64_t now) {
 bool Tester::cb_net_opened(lightcone::Tcp* conn, uint64_t now) {
     connects++;
     conn->send(m_sendbuf, m_packet_size);
+    packets++;
     return true;
 }
 // -----------------------------------------------------------
@@ -78,7 +79,7 @@ bool Tester::cb_net_closed(lightcone::Tcp* conn, uint64_t now) {
 bool Tester::cb_net_recv(lightcone::Tcp* conn, uint64_t now) {
     conn->recv([this, conn](const uint8_t* rbuf, size_t rlen) -> size_t {
         conn->send(rbuf, rlen);
-        packets++;
+        packets+=2;   // one in, one out
         return rlen;
     });
     return true;
