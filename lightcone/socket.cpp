@@ -28,7 +28,7 @@ bool Socket::init(int domain, int type, int proto) {
     if (m_fd != INVALID_SOCKET) return false;
     m_fd = ::socket(domain, type, proto);
     if (m_fd == INVALID_SOCKET) return false;
-#if defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS)
+#if defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
     int v = 1;
     setsockopt(m_fd, SOL_SOCKET, SO_NOSIGPIPE, reinterpret_cast<char*>(&v), sizeof(v));
 #endif
@@ -68,7 +68,7 @@ void Socket::close() {
     if (m_fd != INVALID_SOCKET) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
         ::closesocket(m_fd);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
         ::close(m_fd);
 #else
     #error Not Implemented!
@@ -98,7 +98,7 @@ bool Socket::set_nonblocking(bool b) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     uint64_t a = b ? 1 : 0;
     ioctlsocket(m_fd, FIONBIO, &a);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     if (b) {
         fcntl(m_fd, F_SETFL, fcntl(m_fd, F_GETFL)|O_NONBLOCK);
     } else {
@@ -116,7 +116,7 @@ bool Socket::set_reuse() {
     int opt = 1;
     socklen_t slen = sizeof(opt);
     return setsockopt(m_fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&opt), slen) == 0;
-#elif defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS)
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
     int opt = 1;
     socklen_t slen = sizeof(opt);
     if (setsockopt(m_fd, SOL_SOCKET, SO_REUSEADDR, &opt, slen) != 0) return false;
@@ -146,7 +146,7 @@ bool Socket::is_error() const {
 //    case WSAEWOULDBLOCK:
 //        return false;
   } return false;
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     int err;
     socklen_t slen = sizeof(err);
     if (getsockopt(m_fd, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&err), &slen) != 0) {

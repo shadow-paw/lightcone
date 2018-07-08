@@ -2,11 +2,12 @@
 #define LIGHTCONE_THREADS_H__
 
 #include <thread>
+#include "copyable.h"
 
 namespace lightcone {
 // -----------------------------------------------------------
 //! Thread Pool
-class Threads {
+class Threads : private NonCopyable<Threads> {
  public:
     Threads();
     virtual ~Threads();

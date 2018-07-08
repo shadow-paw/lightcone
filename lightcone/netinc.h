@@ -8,7 +8,7 @@
     #include <windows.h>
     #undef WIN32_LEAN_AND_MEAN
 
-#elif defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS)
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
     #include <sys/types.h>
     #include <sys/ioctl.h>
     #include <sys/socket.h>

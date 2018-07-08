@@ -45,7 +45,7 @@ bool udp_mcast6() {
     lightcone::SockAddr addr1;
     lightcone::SockAddr addr2;
     if (!addr1.set_ip6("::", 8888)) return false;
-    if (!addr2.set_ip6("FF05:0:0:0:0:0:0:2", 8888)) return false;
+    if (!addr2.set_ip6("ff05:0:0:0:0:0:0:2", 8888)) return false;
     if (!udp1.open(addr1.get_domain(), true)) return false;
     if (!udp2.open(addr2.get_domain(), true)) return false;
     if (!udp1.bind(addr1, true)) return false;

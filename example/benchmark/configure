@@ -5,7 +5,7 @@
 # Configurations
 ##################################
 OUTFILE="Makefile"
-PROJECT=lightcone
+PROJECT=example
 
 
 ##################################
@@ -177,7 +177,7 @@ cat << EOM
 [ ] Linker Option...........$LDFLAGS
 [ ] Link Libraries..........$LDLIBS
 [ ] Libtool Option..........$LIBFLAGS
-[ ] Output Library..........lib/$TARGET/lib$PROJECT.a
+[ ] Output..................bin/$TARGET/$PROJECT
 EOM
 
 cat << EOM   >$OUTFILE
@@ -198,60 +198,70 @@ LDLIBS  =$LDLIBS
 LIBFLAGS=$LIBFLAGS
 CWARN   =$CWARN
 CXXWARN =$CXXWARN
-CPPLINTFLAGS=--quiet --filter=-legal/copyright,-build/include_subdir,-build/c++11,-readability/todo --linelength=200
+CPPLINTFLAGS=--quiet --filter=-legal/copyright,-build/include_subdir,-build/c++11,-readability/todo,-build/header_guard --linelength=200
 
 
-.PHONY: all MakeLib test lint lint-lib lint-test doc dist clean
-all: MakeLib
+.PHONY: all MakeApp test lint lint-app lint-test doc clean
+all: MakeApp
 
 
-# Library
+LIGHTCONE_LIB=-L../../lightcone/lib/$TARGET -llightcone
+
+# Application
 ########################
-LIB_PATH_SRC=./
-LIB_PATH_HEADER=./
-LIB_PATH_BUILD=.build/
-LIB_PATH_TEST=test/
-LIB_PATH_DIST=dist/
+APP_PATH_SRC=src/
+APP_PATH_HEADER=src/
+APP_PATH_BUILD=.build/
+APP_PATH_TEST=test/
+APP_PATH_DIST=dist/
+APP_PATH_BIN=bin/$TARGET/
 
-LIB_FILE_H  :=\$(sort \$(wildcard \$(LIB_PATH_HEADER)*.h))
-LIB_FILE_C  :=\$(sort \$(wildcard \$(LIB_PATH_SRC)*.c))
-LIB_FILE_CPP:=\$(sort \$(wildcard \$(LIB_PATH_SRC)*.cpp))
-LIB_FILE_O  :=\$(patsubst \$(LIB_PATH_SRC)%.c,\$(LIB_PATH_BUILD)%_c.o,\$(LIB_FILE_C)) \\
-              \$(patsubst \$(LIB_PATH_SRC)%.cpp,\$(LIB_PATH_BUILD)%.o,\$(LIB_FILE_CPP))
-LIB_FILE_DEP:=\$(patsubst %.o,%.d,\$(LIB_FILE_O))
-LIB_FILE_OUT:=lib/$TARGET/lib\$(PROJECT).a
+APP_INCLUDE=-I../../ -I\$(APP_PATH_HEADER)
 
--include \$(LIB_FILE_DEP)
+APP_FILE_MAIN:=\$(APP_PATH_SRC)main.cpp
+APP_FILE_H  :=\$(sort \$(wildcard \$(APP_PATH_HEADER)*.h))
+APP_FILE_C  :=\$(sort \$(filter-out \$(APP_FILE_MAIN), \$(wildcard \$(APP_PATH_SRC)*.c)))
+APP_FILE_CPP:=\$(sort \$(filter-out \$(APP_FILE_MAIN), \$(wildcard \$(APP_PATH_SRC)*.cpp)))
+APP_FILE_O  :=\$(patsubst \$(APP_PATH_SRC)%.c,\$(APP_PATH_BUILD)%_c.o,\$(APP_FILE_C)) \\
+              \$(patsubst \$(APP_PATH_SRC)%.cpp,\$(APP_PATH_BUILD)%.o,\$(APP_FILE_CPP))
+APP_FILE_MAINO:=\$(patsubst \$(APP_PATH_SRC)%.cpp,\$(APP_PATH_BUILD)%.o,\$(APP_FILE_MAIN))
+APP_FILE_DEP:=\$(patsubst %.o,%.d,\$(APP_FILE_O))
+APP_FILE_OUT:=\$(APP_PATH_BIN)\$(PROJECT)
+
+-include \$(APP_FILE_DEP)
 
 # Build Commands
 ########################
 MakePath:
-	@mkdir -p \$(LIB_PATH_BUILD) lib/$TARGET/
+	@mkdir -p \$(APP_PATH_BUILD) \$(APP_PATH_BIN)
 
-MakeLib: MakePath \$(LIB_FILE_OUT)
-\$(LIB_FILE_OUT): Makefile \$(LIB_FILE_O)
-	@echo "[LIB ] \$@"
-	@\$(LIBTOOL) \$(LIBFLAGS) \$@ \$(LIB_FILE_O)
+MakeApp: MakePath \$(APP_FILE_OUT) \$(APP_FILE_MAINO) Makefile
+\$(APP_FILE_OUT): Makefile \$(APP_FILE_O) \$(APP_FILE_MAINO)
+	@echo "[LINK] \$@"
+	@\$(CXX) \$(LDFLAGS) -o \$@ \$(APP_FILE_MAINO) \$(APP_FILE_O) \$(LIGHTCONE_LIB) \$(LDLIBS)
 	@echo ;
 
-\$(LIB_PATH_BUILD)%_c.o: \$(LIB_PATH_SRC)%.c Makefile
+\$(APP_PATH_BUILD)%_c.o: \$(APP_PATH_SRC)%.c Makefile
 	@echo "[CC  ] \$<"
-	@\$(CC) \$(CFLAGS) \$(CWARN) -I\$(LIB_PATH_HEADER) -c \$< -o \$@
+	@\$(CC) \$(CFLAGS) \$(CWARN) \$(APP_INCLUDE) -c \$< -o \$@
 
-\$(LIB_PATH_BUILD)%.o: \$(LIB_PATH_SRC)%.cpp Makefile
+\$(APP_PATH_BUILD)%.o: \$(APP_PATH_SRC)%.cpp Makefile
 	@echo "[CXX ] \$<"
-	@\$(CXX) \$(CXXFLAGS) \$(CXXWARN) -I\$(LIB_PATH_HEADER) -c \$< -o \$@
+	@\$(CXX) \$(CXXFLAGS) \$(CXXWARN) \$(APP_INCLUDE) -c \$< -o \$@
 
-lint-lib:
-	@echo "[LINT] library"
-	@cpplint \$(CPPLINTFLAGS) \$(LIB_FILE_CPP) \$(LIB_FILE_H)
+lint-app:
+	@echo "[LINT] example"
+	@cpplint \$(CPPLINTFLAGS) \$(APP_FILE_CPP) \$(APP_FILE_H)
 
 # Unit Test
 #################################################
-TEST_INCLUDE=\$(LIB_PATH_HEADER)../
-TEST_FILE_CPP := \$(sort \$(wildcard \$(LIB_PATH_TEST)*.cpp))
-TEST_FILE_PROG:= \$(patsubst \$(LIB_PATH_TEST)%.cpp,\$(LIB_PATH_BUILD)%_t.test,\$(TEST_FILE_CPP))
+TEST_PATH_SRC=test/
+TEST_PATH_BUILD=.build/
+TEST_FILE_CPP := \$(sort \$(wildcard \$(TEST_PATH_SRC)*.cpp))
+TEST_FILE_PROG:= \$(patsubst \$(TEST_PATH_SRC)%.cpp,\$(TEST_PATH_BUILD)%_t.test,\$(TEST_FILE_CPP))
 TEST_FILE_DEPT:= \$(patsubst %.test,%.d,\$(TEST_FILE_PROG))
+
+TEST_INCLUDE=-I../../ -I\$(APP_PATH_HEADER)
 
 test: MakePath \$(TEST_FILE_PROG)
 	@rc=0; count=0; \\
@@ -263,28 +273,22 @@ test: MakePath \$(TEST_FILE_PROG)
 	echo "Tests executed: \$\$count  Tests failed: \$\$rc"; \\
 	if [ "\$\$rc" != "0" ]; then false; fi
 
-\$(LIB_PATH_BUILD)%_t.test: \$(LIB_PATH_TEST)%.cpp Makefile \$(LIB_FILE_OUT)
+\$(TEST_PATH_BUILD)%_t.test: \$(TEST_PATH_SRC)%.cpp Makefile \$(APP_FILE_OUT)
 	@echo "[CXX ] \$<"
-	@\$(CXX) \$(CXXFLAGS) \$(LDFLAGS) -I\$(TEST_INCLUDE) \$< \$(LIB_FILE_OUT) \$(LDLIBS) -o \$@
+	@\$(CXX) \$(CXXFLAGS) \$(LDFLAGS) \$(TEST_INCLUDE) \$< \$(APP_FILE_OUT) \$(LDLIBS) -o \$@
 
 lint-test:
-	@echo "[LINT] tests"
-	@cpplint \$(CPPLINTFLAGS) \$(TEST_FILE_CPP)
-
+	@if [ "\$(TEST_FILE_CPP)" != "" ]; then @echo "[LINT] test"; @cpplint \$(CPPLINTFLAGS) \$(TEST_FILE_CPP); fi
 
 # Misc
 #################################################
 clean:
-	@-rm \$(LIB_FILE_O) \$(LIB_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
+	@-rm \$(APP_FILE_O) \$(APP_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
 
-lint: lint-lib lint-test
+lint: lint-app lint-test
 
 doc:
 	@doxygen
 
-dist: MakeLib
-	@mkdir -p \$(LIB_PATH_DIST)
-	@echo TAR \$(LIB_PATH_DIST)\$(PROJECT)-\$(PROJECT_VER).tgz
-	@tar czf \$(LIB_PATH_DIST)\$(PROJECT)-\$(PROJECT_VER).tgz \$(LIB_FILE_OUT) \$(LIB_FILE_H)
-
 EOM
+

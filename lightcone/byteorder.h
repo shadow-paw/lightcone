@@ -14,7 +14,7 @@
     #define LIGHTCONE_ENDIANBIG
   #endif
 
-#elif defined(PLATFORM_OSX)
+#elif defined(PLATFORM_MAC)
   #if defined(__i386__) || defined(__x86_64__)
     #define LIGHTCONE_ENDIANLITTLE
   #elif defined(__ppc__)

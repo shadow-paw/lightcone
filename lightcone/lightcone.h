@@ -14,5 +14,7 @@
 #include "udp.h"
 #include "netengine.h"
 #include "beacon.h"
+#include "cmdarg.h"
+#include "sysinfo.h"
 
 #endif  // LIGHTCONE_LIGHTCONE_H_
