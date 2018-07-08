@@ -2,6 +2,7 @@
 #include "calendar.h"
 #include "netengine.h"
 #include "netpoller.h"
+#include "sysinfo.h"
 
 namespace lightcone {
 // -----------------------------------------------------------
@@ -15,6 +16,9 @@ void NetEngine::set_timeout(uint64_t timeout) {
 }
 // -----------------------------------------------------------
 bool NetEngine::start(int num_worker) {
+    if (num_worker < 0) {
+        num_worker = SysInfo::cpu_core() * (-num_worker);
+    }
     if (num_worker <= 0 || num_worker > kMaxWorker) return false;
     m_lb->setup(1, num_worker);
     return Threads::start((unsigned int)(num_worker+1));  // +1 for listen thread

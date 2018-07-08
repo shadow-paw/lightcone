@@ -23,7 +23,7 @@ class NetEngine : private NonCopyable<NetEngine>, protected Threads {
     virtual ~NetEngine() = default;
 
     //! Start server
-    //! \param[in] threads Number of threads
+    //! \param[in] threads Number of threads, negative means scale factor with cpu core.
     //! \return true on success, false on fail with no side-effect.
     //! \sa stop
     bool start(int threads);

@@ -79,7 +79,7 @@ bool Tcp::connect(const SockAddr& addr, bool nonblocking, std::function<void(boo
     if (!m_socket.connect(addr)) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
         if (WSAEWOULDBLOCK != WSAGetLastError()) goto fail;
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
         if (errno != EINPROGRESS) goto fail;
 #else
     #error Not Implemented!
@@ -228,7 +228,7 @@ bool Tcp::io_write() {
         len = (ssize_t)::send(m_socket, reinterpret_cast<char*>(buf), reinterpret_cast<int>(wlen), 0);
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_ANDROID)
         len = ::send(m_socket, wbuf, wlen, MSG_NOSIGNAL);
-#elif defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_SOLARIS)
         len = ::send(m_socket, wbuf, wlen, 0);
 #else
     #error Not Implemented!

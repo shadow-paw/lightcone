@@ -44,7 +44,7 @@ ssize_t Udp::send(const SockAddr& addr, const void* buf, size_t len) {
     auto p = addr.get_addr();
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     return (ssize_t)sendto(m_socket, (const char*)buf, static_cast<int>(len), 0, p.first, p.second);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     return sendto(m_socket, buf, len, 0, p.first, p.second);
 #else
     #error Not Implemented!
@@ -64,7 +64,7 @@ ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout)
     socklen_t slen = sizeof(sender->m_addr);
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     return (ssize_t)recvfrom(m_socket, reinterpret_cast<char*>(buf), reinterpret_cast<int>(len), 0, reinterpret_cast<struct sockaddr*>(&sender->m_addr), &slen);
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     return recvfrom(m_socket, buf, len, 0, reinterpret_cast<struct sockaddr*>(&sender->m_addr), &slen);
 #else
     #error Not Implemented!

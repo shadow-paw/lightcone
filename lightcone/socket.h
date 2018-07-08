@@ -10,7 +10,7 @@ namespace lightcone {
 // -----------------------------------------------------------
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     typedef SOCKET RAW_SOCKET;
-#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_OSX) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+#elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     typedef int RAW_SOCKET;
 #endif
 
