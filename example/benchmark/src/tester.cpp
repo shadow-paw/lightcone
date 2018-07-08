@@ -78,9 +78,14 @@ bool Tester::cb_net_closed(lightcone::Tcp* conn, uint64_t now) {
 // -----------------------------------------------------------
 bool Tester::cb_net_recv(lightcone::Tcp* conn, uint64_t now) {
     conn->recv([this, conn](const uint8_t* rbuf, size_t rlen) -> size_t {
-        conn->send(rbuf, rlen);
-        packets+=2;   // one in, one out
-        return rlen;
+        size_t consumed = 0;
+        while (rlen >= m_packet_size) {
+            conn->send(m_sendbuf, m_packet_size);
+            packets += 2;  // one in, one out
+            rlen -= m_packet_size;
+            consumed += m_packet_size;
+        }
+        return consumed;
     });
     return true;
 }
