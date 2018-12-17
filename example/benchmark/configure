@@ -286,9 +286,9 @@ clean:
 	@-rm \$(APP_FILE_O) \$(APP_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
 
 lint: lint-app lint-test
+	@:
 
 doc:
 	@doxygen
 
 EOM
-

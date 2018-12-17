@@ -16,11 +16,9 @@ NetPoller::NetPoller() {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 NetPoller::~NetPoller() {
     fini();
 }
-// -----------------------------------------------------------
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_KQUEUE
 bool NetPoller::ensure_changes_size(int size) {
     if ( size > m_changes_capacity ) {
@@ -31,7 +29,6 @@ bool NetPoller::ensure_changes_size(int size) {
     } return true;
 }
 #endif
-// -----------------------------------------------------------
 bool NetPoller::init() {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     return true;
@@ -53,7 +50,6 @@ bool NetPoller::init() {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 void NetPoller::fini() {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
 #elif LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_EPOLL
@@ -68,7 +64,6 @@ void NetPoller::fini() {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 bool NetPoller::add(const RAW_SOCKET& fd, int event, void* ud) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     if (fd >= FD_SETSIZE) return false;
@@ -95,7 +90,6 @@ bool NetPoller::add(const RAW_SOCKET& fd, int event, void* ud) {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 bool NetPoller::remove(const RAW_SOCKET& fd) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     for (auto it=m_list.begin(); it != m_list.end(); ++it) {
@@ -119,7 +113,6 @@ bool NetPoller::remove(const RAW_SOCKET& fd) {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 bool NetPoller::modify(const RAW_SOCKET& fd, int event, void* ud) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     for (auto it=m_list.begin(); it != m_list.end(); ++it) {
@@ -145,7 +138,6 @@ bool NetPoller::modify(const RAW_SOCKET& fd, int event, void* ud) {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 bool NetPoller::poll(unsigned int milliseconds, std::function<bool(const RAW_SOCKET& fd, int event, void* ud)> cb) {
 #if LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_SELECT
     fd_set rfds, wfds, efds;

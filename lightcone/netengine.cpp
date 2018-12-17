@@ -10,11 +10,9 @@ NetEngine::NetEngine(LoadBalancer<uint32_t>* lb) {
     m_lb = lb;
     m_timeout = 0;
 }
-// -----------------------------------------------------------
 void NetEngine::set_timeout(uint64_t timeout) {
     m_timeout = timeout;
 }
-// -----------------------------------------------------------
 bool NetEngine::start(int num_worker) {
     if (num_worker < 0) {
         num_worker = SysInfo::cpu_core() * (-num_worker);
@@ -23,11 +21,9 @@ bool NetEngine::start(int num_worker) {
     m_lb->setup(1, num_worker);
     return Threads::start((unsigned int)(num_worker+1));  // +1 for listen thread
 }
-// -----------------------------------------------------------
 void NetEngine::stop() {
     Threads::stop();
 }
-// -----------------------------------------------------------
 bool NetEngine::listen(const SockAddr& addr, std::function<bool(Tcp*)> initializer) {
     Tcp* conn = new Tcp();
     if (conn == nullptr) return false;
@@ -45,7 +41,6 @@ bool NetEngine::listen(const SockAddr& addr, std::function<bool(Tcp*)> initializ
         msleep(1);
     }
 }
-// -----------------------------------------------------------
 bool NetEngine::connect(const SockAddr& addr, std::function<bool(Tcp*)> initializer) {
     Tcp* conn = new Tcp();
     if (conn == nullptr) return false;
@@ -65,7 +60,6 @@ bool NetEngine::connect(const SockAddr& addr, std::function<bool(Tcp*)> initiali
         msleep(1);
     }
 }
-// -----------------------------------------------------------
 void NetEngine::worker(unsigned int id, bool* runflag) {
     if (id == 0) {
         worker_listen(id, runflag);
@@ -73,7 +67,6 @@ void NetEngine::worker(unsigned int id, bool* runflag) {
         worker_socket(id, runflag);
     }
 }
-// -----------------------------------------------------------
 void NetEngine::worker_listen(unsigned int id, bool* runflag) {
     NetPoller poller;
     std::list<Tcp*> sockets;
@@ -122,7 +115,6 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
         }
     }
 }
-// -----------------------------------------------------------
 void NetEngine::worker_socket(unsigned int id, bool* runflag) {
     NetPoller poller;
     std::list<Tcp*> sockets;

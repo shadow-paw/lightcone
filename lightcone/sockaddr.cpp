@@ -7,37 +7,29 @@ namespace lightcone {
 SockAddr::SockAddr(const std::string& ip, int port) {
     if (!set_ip(ip, port)) throw std::invalid_argument("ip");
 }
-// -----------------------------------------------------------
 SockAddr::SockAddr(const struct sockaddr& o) {
     m_addr.base = o;
 }
-// -----------------------------------------------------------
 SockAddr::SockAddr(const struct sockaddr_in& o) {
     m_addr.ip4 = o;
 }
-// -----------------------------------------------------------
 SockAddr::SockAddr(const struct sockaddr_in6& o) {
     m_addr.ip6 = o;
 }
-// -----------------------------------------------------------
 SockAddr::SockAddr(const SockAddr& o) {
     m_addr = o.m_addr;
 }
-// -----------------------------------------------------------
 SockAddr::SockAddr(SockAddr&& o) {
     m_addr = o.m_addr;
 }
-// -----------------------------------------------------------
 SockAddr& SockAddr::operator=(const SockAddr& o) {
     m_addr = o.m_addr;
     return *this;
 }
-// -----------------------------------------------------------
 SockAddr& SockAddr::operator=(SockAddr&& o) {
     m_addr = o.m_addr;
     return *this;
 }
-// -----------------------------------------------------------
 std::pair<const struct sockaddr*, socklen_t> SockAddr::get_addr() const {
     switch (m_addr.base.sa_family) {
     case AF_INET:
@@ -48,7 +40,6 @@ std::pair<const struct sockaddr*, socklen_t> SockAddr::get_addr() const {
         return std::make_pair(nullptr, 0);
     }
 }
-// -----------------------------------------------------------
 uint32_t SockAddr::get_ip4() const {
     switch (m_addr.base.sa_family) {
     case AF_INET: {
@@ -58,7 +49,6 @@ uint32_t SockAddr::get_ip4() const {
         }
     } return 0;
 }
-// -----------------------------------------------------------
 int SockAddr::get_port() const {
     switch (m_addr.base.sa_family) {
     case AF_INET:  return ntohs(m_addr.ip4.sin_port);
@@ -66,7 +56,6 @@ int SockAddr::get_port() const {
     default:       return 0;
     }
 }
-// -----------------------------------------------------------
 void SockAddr::set_port(int port) {
     switch (m_addr.base.sa_family) {
     case AF_INET:
@@ -77,7 +66,6 @@ void SockAddr::set_port(int port) {
         break;
     }
 }
-// -----------------------------------------------------------
 std::string SockAddr::to_string() const {
     char buffer[INET_ADDRSTRLEN] = {};
     int port = 0;
@@ -94,7 +82,6 @@ std::string SockAddr::to_string() const {
         return "Invalid AF";
     } return std::string(buffer) + ":" + std::to_string(port);
 }
-// -----------------------------------------------------------
 bool SockAddr::set_ip(const std::string& ip, int port) {
     if (ip.find(".") != std::string::npos) {
         return set_ip4(ip, port);
@@ -102,14 +89,12 @@ bool SockAddr::set_ip(const std::string& ip, int port) {
         return set_ip6(ip, port);
     }
 }
-// -----------------------------------------------------------
 bool SockAddr::set_ip4(const std::string& ip, int port) {
     if (inet_pton(AF_INET, ip.c_str(), &m_addr.ip4.sin_addr) != 1) return false;
     m_addr.ip4.sin_family = AF_INET;
     m_addr.ip4.sin_port = htons((uint16_t)port);
     return true;
 }
-// -----------------------------------------------------------
 bool SockAddr::set_ip6(const std::string& ip, int port) {
     if (ip == "::") {
         m_addr.ip6.sin6_family = AF_INET6;
@@ -121,7 +106,6 @@ bool SockAddr::set_ip6(const std::string& ip, int port) {
         m_addr.ip6.sin6_port = htons((uint16_t)port);
     } return true;
 }
-// -----------------------------------------------------------
 bool SockAddr::resolve(const std::string& host, int default_port) {
     struct addrinfo hints = {};
     struct addrinfo* addrs = nullptr;
@@ -143,7 +127,6 @@ bool SockAddr::resolve(const std::string& host, int default_port) {
     freeaddrinfo(addrs);
     return true;
 }
-// -----------------------------------------------------------
 bool SockAddr::is_multicast() const {
     switch (m_addr.base.sa_family) {
     case AF_INET:
@@ -152,7 +135,6 @@ bool SockAddr::is_multicast() const {
         return ((unsigned char)m_addr.ip6.sin6_port == 0xff);  // high octet is 0xff
     } return false;
 }
-// -----------------------------------------------------------
 uint32_t SockAddr::hash() const {
     uint32_t ret = 0;
     switch (m_addr.base.sa_family) {

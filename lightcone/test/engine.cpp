@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "lightcone/lightcone.h"
+#include "unittest.h"
 
 // -----------------------------------------------------------
 class TestServer : public lightcone::NetEngine {
@@ -22,7 +23,7 @@ class TestServer : public lightcone::NetEngine {
     }
     bool cb_net_accepted(lightcone::Tcp* conn, uint64_t now) {
         accepted = true;
-        conn->ud.u32_1 = 1;
+        conn->ud.emplace('mode', 1);
         return true;
     }
     bool cb_net_opened(lightcone::Tcp* conn, uint64_t now) {
@@ -40,8 +41,8 @@ class TestServer : public lightcone::NetEngine {
     }
     bool cb_net_recv(lightcone::Tcp* conn, uint64_t now) {
         recv = true;
-        conn->recv([this, conn](const uint8_t* rbuf, size_t rlen) -> size_t {
-            if (conn->ud.u32_1) {
+        conn->recv([conn](const uint8_t* rbuf, size_t rlen) -> size_t {
+            if (conn->ud['mode']) {
                 conn->send(rbuf, rlen);
             }
             return rlen;
@@ -56,7 +57,6 @@ class TestServer : public lightcone::NetEngine {
 bool engine_pingpong() {
     bool result = false;
     TestServer s;
-    lightcone::SockAddr addr;
     if (!s.start(2)) return false;
     if (!s.listen(lightcone::SockAddr("0.0.0.0", 8888))) return false;
     if (!s.connect(lightcone::SockAddr("127.0.0.1", 8888))) return false;
@@ -73,15 +73,11 @@ bool engine_pingpong() {
     return result;
 }
 // -----------------------------------------------------------
-bool run_tests() {
-    if (!engine_pingpong()) { printf ("FAILED. engine_pingpong()\n"); return false; }
-    return true;
-}
-// -----------------------------------------------------------
 int main(int argc, char* argv[]) {
     lightcone::Network::start();
-    bool success = run_tests();
+    UnitTest t(__FILE__);
+    t.run("engine_pingpong", engine_pingpong);
     lightcone::Network::stop();
-    return success ? 0 : 1;
+    return t.failed ? 1 : 0;
 }
 // -----------------------------------------------------------

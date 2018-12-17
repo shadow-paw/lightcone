@@ -250,6 +250,7 @@ lint-lib:
 #################################################
 TEST_INCLUDE=\$(LIB_PATH_HEADER)../
 TEST_FILE_CPP := \$(sort \$(wildcard \$(LIB_PATH_TEST)*.cpp))
+TEST_FILE_H := \$(sort \$(wildcard \$(LIB_PATH_TEST)*.h))
 TEST_FILE_PROG:= \$(patsubst \$(LIB_PATH_TEST)%.cpp,\$(LIB_PATH_BUILD)%_t.test,\$(TEST_FILE_CPP))
 TEST_FILE_DEPT:= \$(patsubst %.test,%.d,\$(TEST_FILE_PROG))
 
@@ -265,11 +266,11 @@ test: MakePath \$(TEST_FILE_PROG)
 
 \$(LIB_PATH_BUILD)%_t.test: \$(LIB_PATH_TEST)%.cpp Makefile \$(LIB_FILE_OUT)
 	@echo "[CXX ] \$<"
-	@\$(CXX) \$(CXXFLAGS) \$(LDFLAGS) -I\$(TEST_INCLUDE) \$< \$(LIB_FILE_OUT) \$(LDLIBS) -o \$@
+	@\$(CXX) \$(CXXFLAGS) \$(CXXWARN) \$(LDFLAGS) -I\$(TEST_INCLUDE) \$< \$(LIB_FILE_OUT) \$(LDLIBS) -o \$@
 
 lint-test:
 	@echo "[LINT] tests"
-	@cpplint \$(CPPLINTFLAGS) \$(TEST_FILE_CPP)
+	@cpplint \$(CPPLINTFLAGS) \$(TEST_FILE_CPP) \$(TEST_FILE_H)
 
 
 # Misc
@@ -278,13 +279,13 @@ clean:
 	@-rm \$(LIB_FILE_O) \$(LIB_FILE_DEP) \$(TEST_FILE_PROG) \$(TEST_FILE_DEPT)
 
 lint: lint-lib lint-test
+	@:
 
 doc:
-	@doxygen
+	@doxygen Doxyfile
 
 dist: MakeLib
 	@mkdir -p \$(LIB_PATH_DIST)
 	@echo TAR \$(LIB_PATH_DIST)\$(PROJECT)-\$(PROJECT_VER).tgz
 	@tar czf \$(LIB_PATH_DIST)\$(PROJECT)-\$(PROJECT_VER).tgz \$(LIB_FILE_OUT) \$(LIB_FILE_H)
-
 EOM

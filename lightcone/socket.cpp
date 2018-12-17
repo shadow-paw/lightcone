@@ -5,25 +5,20 @@ namespace lightcone {
 Socket::Socket() {
     m_fd = INVALID_SOCKET;
 }
-// -----------------------------------------------------------
 Socket::~Socket() {
     close();
 }
-// -----------------------------------------------------------
 Socket::Socket(const RAW_SOCKET& o) {
     m_fd = o;
 }
-// -----------------------------------------------------------
 Socket::Socket(Socket&& o) {
     m_fd = o.m_fd; o.m_fd = INVALID_SOCKET;
 }
-// -----------------------------------------------------------
 Socket& Socket::operator=(Socket&& o) {
     close();
     m_fd = o.m_fd; o.m_fd = INVALID_SOCKET;
     return *this;
 }
-// -----------------------------------------------------------
 bool Socket::init(int domain, int type, int proto) {
     if (m_fd != INVALID_SOCKET) return false;
     m_fd = ::socket(domain, type, proto);
@@ -34,16 +29,13 @@ bool Socket::init(int domain, int type, int proto) {
 #endif
     return true;
 }
-// -----------------------------------------------------------
 bool Socket::bind(const SockAddr& addr) {
     auto p = addr.get_addr();
     return ::bind(m_fd, p.first, p.second) == 0;
 }
-// -----------------------------------------------------------
 bool Socket::listen() {
     return ::listen(m_fd, 128) == 0;
 }
-// -----------------------------------------------------------
 bool Socket::accept(SockAddr* addr, std::function<bool(Socket&& accepted, const SockAddr& addr)> handler) {
     struct sockaddr a;
     socklen_t slen = sizeof(a);
@@ -58,12 +50,10 @@ bool Socket::accept(SockAddr* addr, std::function<bool(Socket&& accepted, const 
     }
     return true;
 }
-// -----------------------------------------------------------
 bool Socket::connect(const SockAddr& addr) {
     auto p = addr.get_addr();
     return ::connect(m_fd, p.first, p.second) == 0;
 }
-// -----------------------------------------------------------
 void Socket::close() {
     if (m_fd != INVALID_SOCKET) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
@@ -76,7 +66,6 @@ void Socket::close() {
         m_fd = INVALID_SOCKET;
     }
 }
-// -----------------------------------------------------------
 SockAddr Socket::get_local() const {
     SockAddr addr;
     if (m_fd == INVALID_SOCKET) return addr;
@@ -84,7 +73,6 @@ SockAddr Socket::get_local() const {
     if (getsockname(m_fd, &addr.m_addr.base, &slen) != 0) return addr;
     return addr;
 }
-// -----------------------------------------------------------
 SockAddr Socket::get_remote() const {
     SockAddr addr;
     if (m_fd == INVALID_SOCKET) return addr;
@@ -92,7 +80,6 @@ SockAddr Socket::get_remote() const {
     if (getpeername(m_fd, &addr.m_addr.base, &slen) != 0) return addr;
     return addr;
 }
-// -----------------------------------------------------------
 bool Socket::set_nonblocking(bool b) {
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
@@ -109,7 +96,6 @@ bool Socket::set_nonblocking(bool b) {
 #endif
     return true;
 }
-// -----------------------------------------------------------
 bool Socket::set_reuse() {
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
@@ -129,7 +115,6 @@ bool Socket::set_reuse() {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 bool Socket::is_error() const {
     if (m_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)

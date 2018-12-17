@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <atomic>
 #include "lightcone/lightcone.h"
+#include "unittest.h"
 
 // -----------------------------------------------------------
 class TestThreads : public lightcone::Threads {
@@ -64,15 +65,13 @@ bool threads_message() {
     return true;
 }
 // -----------------------------------------------------------
-bool run_tests() {
-    if (!queue_access()) { printf ("FAILED. queue_access()\n"); return false; }
-    if (!threads_spawn()) { printf ("FAILED. threads_spawn()\n"); return false; }
-    if (!threads_message()) { printf ("FAILED. threads_message()\n"); return false; }
-    return true;
-}
-// -----------------------------------------------------------
 int main(int argc, char* argv[]) {
-    bool success = run_tests();
-    return success ? 0 : 1;
+    lightcone::Network::start();
+    UnitTest t(__FILE__);
+    t.run("queue_access", queue_access);
+    t.run("threads_spawn", threads_spawn);
+    t.run("threads_message", threads_message);
+    lightcone::Network::stop();
+    return t.failed ? 1 : 0;
 }
 // -----------------------------------------------------------

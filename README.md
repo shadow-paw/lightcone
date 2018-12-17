@@ -4,25 +4,31 @@
 [![C++ Version][cpp-image]][cpp-url]
 [![TravisCI][travis-image]][travis-url]
 
-`LightCoNE` is a c++ server development kit. In the heart it consist of a network engine, along with some higher level facilities for developing inter-connected server cluster.
+`LightCoNE` is a c++ server development kit. It consist of a network engine, along with some higher level facilities for
+developing inter-connected server cluster.
 
 ### Use Case
 - Service platform with real-time interaction between users
 - Game Servers
 
 #### Network Engine
-The network engine provides a multi-threaded event callback architecture. It utilize best approach on specific platform: `epoll` on linux, `kqueue` on bsd and mac osx. On Windows and solaris we fall back to `select`. See [engine architecture](doc/engine.md) for detail.
+The network engine provides a multi-threaded event callback architecture. It utilize best approach on specific platform:
+`epoll` on linux, `kqueue` on bsd and mac osx. On Windows and solaris we fall back to `select`. See
+[engine architecture](doc/engine.md) for detail.
 
-#### High Level Facility
-`High Level Facility` enable easy communication and scaling of server cluster. A brief list of features:
+#### Protocol
+The kit provides conventent tools to deal with http and websocket.
+
+#### Server Cluster
+Easy communication between cluster of servers. A brief list of features:
 - service discovery to allow hot-plug of server
-- graceful handling of remote server up & down
+- graceful handling of server up & down
 - channel-based inter-server communication
 - client session management and packet routing
 
 ## How To Build
 ```
-cd liblightcone
+cd lightcone
 ./configure
 make && make test
 ```

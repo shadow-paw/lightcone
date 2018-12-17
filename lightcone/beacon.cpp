@@ -18,7 +18,6 @@ Beacon::Beacon() {
     m_port = 0;
     m_beacon_interval = m_beacon_timeout = 1000;
 }
-// -----------------------------------------------------------
 bool Beacon::init(const SockAddr& mcast_addr,
                   uint32_t app, uint32_t service_type, uint32_t service_port,
                   uint64_t interval, uint64_t timeout) {
@@ -45,15 +44,12 @@ bool Beacon::init(const SockAddr& mcast_addr,
     if (!m_udp.joinmcast(mcast_addr)) return false;
     return true;
 }
-// -----------------------------------------------------------
 bool Beacon::start() {
     return Threads::start(1);
 }
-// -----------------------------------------------------------
 void Beacon::stop() {
     Threads::stop();
 }
-// -----------------------------------------------------------
 bool Beacon::send_beacon(void) {
     uint32_t packet[6];
     if (m_service_id == 0) return false;
@@ -66,7 +62,6 @@ bool Beacon::send_beacon(void) {
     m_udp.send(m_bcaddr, packet, sizeof(packet));
     return true;
 }
-// -----------------------------------------------------------
 bool Beacon::send_reserveid(uint32_t id) {
     uint32_t packet[7];
     if (id == 0) return false;
@@ -80,7 +75,6 @@ bool Beacon::send_reserveid(uint32_t id) {
     m_udp.send(m_bcaddr, packet, sizeof(packet));
     return true;
 }
-// -----------------------------------------------------------
 bool Beacon::service_update(const SockAddr& addr, uint32_t type, uint32_t id) {
     auto now = Calendar::now();
     uint32_t ip = addr.get_ip4();
@@ -99,7 +93,6 @@ bool Beacon::service_update(const SockAddr& addr, uint32_t type, uint32_t id) {
     cb_beacon_peerup(type, id, addr);
     return true;
 }
-// -----------------------------------------------------------
 bool Beacon::service_remove(const SockAddr& addr) {
     uint32_t ip = addr.get_ip4();
     int port = addr.get_port();
@@ -116,7 +109,6 @@ bool Beacon::service_remove(const SockAddr& addr) {
     m_services_mutex.unlock();
     return false;
 }
-// -----------------------------------------------------------
 bool Beacon::service_healthcheck() {
     auto now = Calendar::now();
     m_services_mutex.lock();
@@ -137,7 +129,6 @@ bool Beacon::service_healthcheck() {
     m_services_mutex.unlock();
     return true;
 }
-// -----------------------------------------------------------
 void Beacon::worker(unsigned int id, bool* runflag) {
     while (*runflag) {
         auto now = Calendar::now();
@@ -174,7 +165,6 @@ void Beacon::worker(unsigned int id, bool* runflag) {
         while (cb_recv()) {}
     }
 }
-// -----------------------------------------------------------
 bool Beacon::cb_recv() {
     SockAddr peer_addr;
     uint32_t rbuf[64] = { 0 };
@@ -215,7 +205,6 @@ bool Beacon::cb_recv() {
     }
     return true;
 }
-// -----------------------------------------------------------
 bool Beacon::remove_peer(const SockAddr& addr) {
     return service_remove(addr);
 }

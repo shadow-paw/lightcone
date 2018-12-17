@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "lightcone/lightcone.h"
+#include "unittest.h"
 
 // -----------------------------------------------------------
 class BeaconServer : public lightcone::Beacon {
@@ -27,7 +28,7 @@ class BeaconServer : public lightcone::Beacon {
     }
 };
 // -----------------------------------------------------------
-bool test_discovery() {
+bool beacon_discovery4() {
     bool result = false;
     BeaconServer alice, bob;
     lightcone::SockAddr mcast_addr("239.0.0.4", 8888);
@@ -47,7 +48,7 @@ bool test_discovery() {
     return result;
 }
 // -----------------------------------------------------------
-bool test_discovery6() {
+bool beacon_discovery6() {
     bool result = false;
     BeaconServer alice, bob;
     lightcone::SockAddr mcast_addr("ff05:0:0:0:0:0:0:2", 8888);
@@ -67,17 +68,13 @@ bool test_discovery6() {
     return result;
 }
 // -----------------------------------------------------------
-bool run_tests() {
-    if (!test_discovery()) { printf ("FAILED. test_discovery()\n"); return false; }
-    // NOTE: travis-ci don't have ipv6 multicast
-    // if (!test_discovery6()) { printf ("FAILED. test_discovery6()\n"); return false; }
-    return true;
-}
-// -----------------------------------------------------------
 int main(int argc, char* argv[]) {
     lightcone::Network::start();
-    bool success = run_tests();
+    UnitTest t(__FILE__);
+    t.run("discovery ipv4", beacon_discovery4);
+    // NOTE: travis-ci don't have ipv6 multicast
+    // t.run("discovery ipv6",beacon_discovery6);
     lightcone::Network::stop();
-    return success ? 0 : 1;
+    return t.failed ? 1 : 0;
 }
 // -----------------------------------------------------------

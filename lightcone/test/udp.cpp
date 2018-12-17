@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "lightcone/lightcone.h"
+#include "unittest.h"
 
 // -----------------------------------------------------------
 bool udp_pingpong() {
@@ -62,18 +63,14 @@ bool udp_mcast6() {
     return false;
 }
 // -----------------------------------------------------------
-bool run_tests() {
-    if (!udp_pingpong()) { printf ("FAILED. udp_pingpong()\n"); return false; }
-    if (!udp_mcast()) { printf ("FAILED. udp_mcast()\n"); return false; }
-    // NOTE: travis-ci don't have ipv6 multicast
-    // if (!udp_mcast6()) { printf ("FAILED. udp_mcast6()\n"); return false; }
-    return true;
-}
-// -----------------------------------------------------------
 int main(int argc, char* argv[]) {
     lightcone::Network::start();
-    bool success = run_tests();
+    UnitTest t(__FILE__);
+    t.run("udp_pingpong", udp_pingpong);
+    t.run("udp_mcast", udp_mcast);
+    // NOTE: travis-ci don't have ipv6 multicast
+    // r.run("udp_mcast6", udp_mcast6);
     lightcone::Network::stop();
-    return success ? 0 : 1;
+    return t.failed ? 1 : 0;
 }
 // -----------------------------------------------------------
