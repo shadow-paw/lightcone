@@ -6,12 +6,10 @@ namespace lightcone {
 Udp::Udp(Udp&& o) {
     m_socket = std::move(o.m_socket);
 }
-// -----------------------------------------------------------
 Udp& Udp::operator=(Udp&& o) {
     m_socket = std::move(o.m_socket);
     return *this;
 }
-// -----------------------------------------------------------
 bool Udp::open(int domain, bool nonblocking) {
     if (m_socket.is_valid()) return false;
     if (!m_socket.init(domain, SOCK_DGRAM, IPPROTO_UDP)) return false;
@@ -20,11 +18,9 @@ bool Udp::open(int domain, bool nonblocking) {
         return false;
     } return true;
 }
-// -----------------------------------------------------------
 void Udp::close() {
     m_socket.close();
 }
-// -----------------------------------------------------------
 bool Udp::bind(const SockAddr& addr, bool reuse) {
     if (!m_socket.is_valid()) return false;
     if (reuse && !m_socket.set_reuse()) {
@@ -33,13 +29,11 @@ bool Udp::bind(const SockAddr& addr, bool reuse) {
     }
     return m_socket.bind(addr);
 }
-// -----------------------------------------------------------
 bool Udp::bind(const std::string& addr, int port, bool reuse) {
     SockAddr a;
     if (!a.resolve(addr, port)) return false;
     return bind(a, reuse);
 }
-// -----------------------------------------------------------
 ssize_t Udp::send(const SockAddr& addr, const void* buf, size_t len) {
     auto p = addr.get_addr();
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
@@ -50,7 +44,6 @@ ssize_t Udp::send(const SockAddr& addr, const void* buf, size_t len) {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout) {
     if (!m_socket.is_valid()) return -1;
     fd_set rfds;
@@ -70,7 +63,6 @@ ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout)
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 bool Udp::joinmcast(const SockAddr& addr) {
     switch (addr.m_addr.base.sa_family) {
     case AF_INET: {

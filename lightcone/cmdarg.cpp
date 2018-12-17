@@ -14,17 +14,14 @@ bool CmdArg::parse(int argc, const char* const* argv) {
         }
     } return true;
 }
-// -----------------------------------------------------------
 bool CmdArg::contains(const std::string& key) const {
     return m_args.find(key) != m_args.end();
 }
-// -----------------------------------------------------------
 std::string CmdArg::first(const std::string& key, const std::string& defvalue) const {
     auto it = m_args.find(key);
     if (it == m_args.end()) return defvalue;
     return it->second;
 }
-// -----------------------------------------------------------
 bool CmdArg::all(const std::string& key, std::function<bool(const std::string& value)> cb) const {
     auto pair = m_args.equal_range(key);
     for (auto it=pair.first; it != pair.second; ++it) {

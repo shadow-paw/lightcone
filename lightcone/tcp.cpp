@@ -9,17 +9,14 @@ Tcp::Tcp() {
     m_state = State::Uninitalized;
     m_evmask = 0;
 }
-// -----------------------------------------------------------
 Tcp::~Tcp() {
 }
-// -----------------------------------------------------------
 Tcp::Tcp(Tcp&& o) {
     m_socket = std::move(o.m_socket);
     m_ibuf = std::move(o.m_ibuf);
     m_obuf = std::move(o.m_obuf);
     m_state = o.m_state; o.m_state = State::Uninitalized;
 }
-// -----------------------------------------------------------
 Tcp& Tcp::operator=(Tcp&& o) {
     m_socket = std::move(o.m_socket);
     m_ibuf = std::move(o.m_ibuf);
@@ -27,19 +24,15 @@ Tcp& Tcp::operator=(Tcp&& o) {
     m_state = o.m_state; o.m_state = State::Uninitalized;
     return *this;
 }
-// -----------------------------------------------------------
 bool Tcp::set_nonblocking(bool b) {
     return m_socket.set_nonblocking(b);
 }
-// -----------------------------------------------------------
 SockAddr Tcp::get_local() const {
     return m_socket.get_local();
 }
-// -----------------------------------------------------------
 SockAddr Tcp::get_remote() const {
     return m_socket.get_remote();
 }
-// -----------------------------------------------------------
 bool Tcp::listen(const SockAddr& addr, bool reuse) {
     if (m_socket.is_valid()) return false;
     if (!m_socket.init(addr.get_domain(), SOCK_STREAM, IPPROTO_TCP)) return false;
@@ -57,7 +50,6 @@ fail:
     close();
     return false;
 }
-// -----------------------------------------------------------
 Tcp* Tcp::accept(SockAddr* addr, std::function<bool(const SockAddr& addr)> firewall) {
     Tcp* ret = nullptr;
     m_socket.accept(addr, [&ret, firewall](Socket&& accepted, const SockAddr& a) -> bool {
@@ -69,7 +61,6 @@ Tcp* Tcp::accept(SockAddr* addr, std::function<bool(const SockAddr& addr)> firew
     });
     return ret;
 }
-// -----------------------------------------------------------
 bool Tcp::connect(const SockAddr& addr, bool nonblocking, std::function<void(bool success)> cb) {
     if (m_socket.is_valid()) return false;
     m_ibuf.free();
@@ -95,13 +86,11 @@ fail:
     close();
     return false;
 }
-// -----------------------------------------------------------
 bool Tcp::connect(const std::string& hostname, int port, bool nonblocking, std::function<void(bool success)> cb) {
     SockAddr addr;
     if (!addr.resolve(hostname, port)) return false;
     return connect(addr, nonblocking, cb);
 }
-// -----------------------------------------------------------
 void Tcp::close() {
     if (m_managed) {
         if (m_state == State::Connnecting) {
@@ -120,7 +109,6 @@ void Tcp::close() {
         m_state = State::Closed;
     }
 }
-// -----------------------------------------------------------
 bool Tcp::send(const std::string& data) {
     uint8_t* wbuf = nullptr;
     size_t datalen = data.length();
@@ -129,7 +117,6 @@ bool Tcp::send(const std::string& data) {
     m_obuf.reserve_end(datalen);
     return true;
 }
-// -----------------------------------------------------------
 bool Tcp::send(const void* data, size_t datalen) {
     uint8_t* wbuf = nullptr;
     if (!m_obuf.reserve_begin(&wbuf, datalen)) return false;
@@ -137,14 +124,12 @@ bool Tcp::send(const void* data, size_t datalen) {
     m_obuf.reserve_end(datalen);
     return true;
 }
-// -----------------------------------------------------------
 bool Tcp::send(size_t reserve_size, std::function<size_t(uint8_t* wbuf, size_t wlen)> cb) {
     uint8_t* wbuf = nullptr;
     if (!m_obuf.reserve_begin(&wbuf, reserve_size)) return false;
     m_obuf.reserve_end(cb(wbuf, reserve_size));
     return true;
 }
-// -----------------------------------------------------------
 bool Tcp::recv(std::function<size_t(const uint8_t* rbuf, size_t rlen)> cb) {
     size_t size = m_ibuf.size();
     if (size > 0) {
@@ -152,7 +137,6 @@ bool Tcp::recv(std::function<size_t(const uint8_t* rbuf, size_t rlen)> cb) {
         m_ibuf.trim_head(processed);
     } return true;
 }
-// -----------------------------------------------------------
 int Tcp::poll(unsigned int milliseconds) {
     if (m_managed) return 0;
     if (!m_socket.is_valid()) return -1;
@@ -171,7 +155,6 @@ int Tcp::poll(unsigned int milliseconds) {
     }
     return 1;
 }
-// -----------------------------------------------------------
 bool Tcp::io_read() {
     const size_t kRecvChunkSize = 8192;
     uint8_t* rbuf;
@@ -207,7 +190,6 @@ bool Tcp::io_read() {
     if (disconnected) close();
     return rlen > 0;
 }
-// -----------------------------------------------------------
 bool Tcp::io_write() {
     uint8_t* wbuf;
     size_t wlen;

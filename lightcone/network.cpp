@@ -13,7 +13,6 @@ void Network::start() {
     #error Not Implemented!
 #endif
 }
-// -----------------------------------------------------------
 void Network::stop() {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     WSACleanup();

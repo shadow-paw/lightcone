@@ -83,3 +83,4 @@ google-services.json
 Makefile
 *.test
 *.bin
+lightcone/doxygen/

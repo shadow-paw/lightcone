@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <string>
+#include <unordered_map>
 #include "buffer.h"
 #include "copyable.h"
 #include "netinc.h"
@@ -15,15 +16,7 @@ class Tcp : private NonCopyable<Tcp> {
 friend class NetEngine;
  public:
     //! convenient holder for user-defined data
-    struct UserData {
-        uint32_t u32_1, u32_2;
-        void *p1, *p2;
-        UserData() {
-            u32_1 = u32_2 = 0;
-            p1 = p2 = nullptr;
-        }
-    };
-    UserData ud;
+    std::unordered_map<uint32_t, uintptr_t> ud;
 
     //! default constructor
     Tcp();

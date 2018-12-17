@@ -16,7 +16,6 @@ namespace lightcone {
 // -----------------------------------------------------------
 int SysInfo::cpu_core() {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
-    // -------------------------------------------------------
     PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL, ptr;
     DWORD byteOffset, returnLen = 0;
     int num_core = 0;
@@ -43,14 +42,12 @@ int SysInfo::cpu_core() {
     return num_core > 0 ? num_core : 1;
 
 #elif defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
-    // -------------------------------------------------------
     int num_core = 1;
     size_t s = sizeof(num_core);
     sysctlbyname("hw.ncpu", &num_core, &s, NULL, 0);
     return num_core > 0 ? num_core : 1;
 
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_ANDROID)
-    // -------------------------------------------------------
     char sz[64];
     FILE *f = popen("cat /proc/cpuinfo | grep processor | wc -l" , "r");
     if (f) {
@@ -64,7 +61,6 @@ int SysInfo::cpu_core() {
     } return 1;
 
 #elif defined(PLATFORM_SOLARIS)
-    // -------------------------------------------------------
     char sz[64];
     FILE *f = popen("kstat cpu_info | grep clock_MHz | wc -l" , "r");
     if (f) {
