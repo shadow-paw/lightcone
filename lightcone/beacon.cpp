@@ -17,6 +17,7 @@ Beacon::Beacon() {
     m_collided = false;
     m_port = 0;
     m_beacon_interval = m_beacon_timeout = 1000;
+    m_beacon_timer = 0;
 }
 bool Beacon::init(const SockAddr& mcast_addr,
                   uint32_t app, uint32_t service_type, uint32_t service_port,
@@ -29,6 +30,7 @@ bool Beacon::init(const SockAddr& mcast_addr,
     m_port            = service_port;
     m_beacon_interval = interval;
     m_beacon_timeout  = timeout;
+    m_beacon_timer    = 0;
     m_collided        = true;
     m_bcaddr = mcast_addr;
     SockAddr inaddr;
