@@ -27,6 +27,7 @@ Easy communication between cluster of servers. A brief list of features:
 - client session management and packet routing
 
 ## How To Build
+Please compile with GCC 8.
 ```
 cd lightcone
 ./configure
@@ -34,7 +35,7 @@ make && make test
 ```
 
 <!-- Markdown link & img dfn's -->
-[cpp-image]: https://img.shields.io/badge/c%2B%2B-14-blue.svg
+[cpp-image]: https://img.shields.io/badge/c%2B%2B-17-blue.svg
 [cpp-url]: https://en.wikipedia.org/wiki/C%2B%2B14
 [travis-image]: https://travis-ci.org/shadow-paw/lightcone.svg?branch=master
 [travis-url]: https://travis-ci.org/shadow-paw/lightcone

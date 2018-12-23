@@ -76,8 +76,8 @@ TARGET=${PLATFORM}-${ARCH}
 case $PLATFORM in
   bsd)
       LIBTOOL="ar"
-       CFLAGS="-O2 -pipe -DPLATFORM_BSD -D_THREAD_SAFE -MMD -MP -Werror"
-     CXXFLAGS="-std=c++14 -O2 -pipe -DPLATFORM_BSD -D_THREAD_SAFE -MMD -MP -Werror"
+       CFLAGS="-std=c17 -O2 -pipe -DPLATFORM_BSD -D_THREAD_SAFE -MMD -MP -Werror"
+     CXXFLAGS="-std=c++17 -O2 -pipe -DPLATFORM_BSD -D_THREAD_SAFE -MMD -MP -Werror"
       LDFLAGS=""
        LDLIBS="-lpthread -lm -dl -lcrypt -lstdc++ -lz"
      LIBFLAGS="-rcs"
@@ -93,8 +93,8 @@ case $PLATFORM in
   ;;
   linux)
       LIBTOOL="ar"
-       CFLAGS="-O2 -pipe -DPLATFORM_LINUX -D_THREAD_SAFE -MMD -MP -Werror"
-     CXXFLAGS="-std=c++14 -O2 -pipe -DPLATFORM_LINUX -D_THREAD_SAFE -MMD -MP -Werror"
+       CFLAGS="-std=c17 -O2 -pipe -DPLATFORM_LINUX -D_THREAD_SAFE -MMD -MP -Werror"
+     CXXFLAGS="-std=c++17 -O2 -pipe -DPLATFORM_LINUX -D_THREAD_SAFE -MMD -MP -Werror"
       LDFLAGS=
        LDLIBS="-lpthread -ldl -lstdc++"
      LIBFLAGS="-rcs"
@@ -112,8 +112,8 @@ case $PLATFORM in
   ;;
   macosx )
       LIBTOOL="libtool"
-       CFLAGS="-O2 -arch i386 -arch x86_64 -DPLATFORM_MAC -D_THREAD_SAFE -Werror"
-     CXXFLAGS="-std=c++14 -O2 -arch i386 -arch x86_64 -no-cpp-precomp -DPLATFORM_MAC -D_THREAD_SAFE -Werror"
+       CFLAGS="-std=c17 -O2 -arch x86_64 -DPLATFORM_MAC -D_THREAD_SAFE -Werror"
+     CXXFLAGS="-std=c++17 -O2 -arch x86_64 -no-cpp-precomp -DPLATFORM_MAC -D_THREAD_SAFE -Werror"
       LDFLAGS=""
        LDLIBS="-lpthread -lm -ldl -lstdc++ -lz"
      LIBFLAGS="-static -o"
@@ -129,8 +129,8 @@ case $PLATFORM in
   ;;
   solaris )
       LIBTOOL="ar"
-       CFLAGS="-O2 -DPLATFORM_SOLARIS -D_THREAD_SAFE -DFD_SETSIZE=16384 -Werror"
-     CXXFLAGS="-std=c++14 -O2 -DPLATFORM_SOLARIS -D_THREAD_SAFE -DFD_SETSIZE=16384 -Werror"
+       CFLAGS="-std=c17 -O2 -DPLATFORM_SOLARIS -D_THREAD_SAFE -DFD_SETSIZE=16384 -Werror"
+     CXXFLAGS="-std=c++17 -O2 -DPLATFORM_SOLARIS -D_THREAD_SAFE -DFD_SETSIZE=16384 -Werror"
       LDFLAGS=""
        LDLIBS="-lpthread -lm -dl -lcrypt -lstdc++ -lz -lsocket -lnsl"
      LIBFLAGS="-rcs"
@@ -148,8 +148,8 @@ case $PLATFORM in
   ;;
   android )
       LIBTOOL=ar
-       CFLAGS="-O2 -DPLATFORM_ANDROID -D_THREAD_SAFE -Wno-psabi -Werror"
-     CXXFLAGS="-std=c++14 -O2 -DPLATFORM_ANDROID -D_THREAD_SAFE -Wno-psabi -Werror"
+       CFLAGS="-std=c17 -O2 -DPLATFORM_ANDROID -D_THREAD_SAFE -Wno-psabi -Werror"
+     CXXFLAGS="-std=c++17 -O2 -DPLATFORM_ANDROID -D_THREAD_SAFE -Wno-psabi -Werror"
       LDFLAGS=""
        LDLIBS="-pthread -ldl -lstdc++"
      LIBFLAGS="-rcs"
