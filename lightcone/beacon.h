@@ -57,7 +57,7 @@ class Beacon : private NonCopyable<Beacon>, private Threads {
  private:
     // Internal Constants
     // -------------------------------------------------------
-    static const uint64_t kNegotiateInterval = 3000;
+    static const uint64_t kNegotiateInterval = 1000;
     static const uint32_t kMagic = 0xbadc0de7;
 
  private:
@@ -97,4 +97,3 @@ class Beacon : private NonCopyable<Beacon>, private Threads {
 }  // namespace lightcone
 
 #endif  // LIGHTCONE_BEACON_H__
-
