@@ -19,7 +19,7 @@ class EchoServer : public lightcone::NetEngine {
     virtual bool cb_net_sent(lightcone::Tcp* conn, uint64_t now);
 
  private:
-    lightcone::LoadBalancerRR<uint32_t> m_lb;
+    lightcone::LoadBalancerRR<uint32_t> _lb;
 };
 // -----------------------------------------------------------
 }  // namespace example

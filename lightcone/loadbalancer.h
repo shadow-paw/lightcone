@@ -29,12 +29,12 @@ class LoadBalancer {
 template <typename TOKEN>
 class LoadBalancerRR : public LoadBalancer<TOKEN> {
  public:
-    bool setup  (int min, int max)   { m_min = min; m_max = max; m_next = min; m_mod = max - min +1; return true; }
-    int  retain (const TOKEN& token) { return m_min + ((m_next++) % m_mod); }
+    bool setup  (int min, int max)   { _min = min; _max = max; _next = min; _mod = max - min +1; return true; }
+    int  retain (const TOKEN& token) { return _min + ((_next++) % _mod); }
     void release(const TOKEN& token) { }
  private:
-    int m_min, m_max, m_mod;
-    std::atomic<int> m_next;
+    int _min, _max, _mod;
+    std::atomic<int> _next;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

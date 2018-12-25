@@ -66,10 +66,10 @@ class NetEngine : private NonCopyable<NetEngine>, protected Threads {
 
  private:
     static const int kMaxWorker = 128;
-    std::mutex m_mutex;
-    LoadBalancer<uint32_t>* m_lb;
-    MessageQueue<Tcp*> m_inbox[kMaxWorker+1];  // +1 for listen thread
-    uint64_t m_timeout;
+    std::mutex _mutex;
+    LoadBalancer<uint32_t>* _lb;
+    MessageQueue<Tcp*> _inbox[kMaxWorker+1];  // +1 for listen thread
+    uint64_t _timeout;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

@@ -14,7 +14,7 @@ class Threads : private NonCopyable<Threads> {
 
     //! Get number of threads
     //! \return number of threads in this pool
-    unsigned int thread_count() const { return m_threads_count; }
+    unsigned int thread_count() const { return _threads_count; }
     //! Start threads
     //! \param[in] num Number of threads, num >= 1
     //! \return true on success, false on fail with no side-effect.
@@ -49,8 +49,8 @@ class Threads : private NonCopyable<Threads> {
         bool        runflag;
         std::thread thread;
     };
-    THREAD_INFO  m_threads[kMaxThreads];
-    unsigned int m_threads_count;
+    THREAD_INFO  _threads[kMaxThreads];
+    unsigned int _threads_count;
 
  private:
     //! \cond Skip this from doxygen

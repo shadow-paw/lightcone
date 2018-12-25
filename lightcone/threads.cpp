@@ -3,7 +3,7 @@
 namespace lightcone {
 // -----------------------------------------------------------
 Threads::Threads() {
-    m_threads_count = 0;
+    _threads_count = 0;
 }
 Threads::~Threads() {
     stop();
@@ -19,23 +19,23 @@ void Threads::usleep(unsigned int usec) {
 }
 bool Threads::start(unsigned int num) {
     if (num <= 0 || num > kMaxThreads) return false;
-    m_threads_count = num;
+    _threads_count = num;
     for (unsigned int i=0; i < num; i++) {
-        m_threads[i].runflag = true;
-        m_threads[i].thread = std::thread(stub, this, i);
+        _threads[i].runflag = true;
+        _threads[i].thread = std::thread(stub, this, i);
     } return true;
 }
 void Threads::stop() {
-    for (unsigned int i=0; i < m_threads_count; i++) {
-        m_threads[i].runflag = false;
+    for (unsigned int i=0; i < _threads_count; i++) {
+        _threads[i].runflag = false;
     }
-    for (unsigned int i=0; i < m_threads_count; i++) {
-        m_threads[i].thread.join();
+    for (unsigned int i=0; i < _threads_count; i++) {
+        _threads[i].thread.join();
     }
-    m_threads_count = 0;
+    _threads_count = 0;
 }
 void Threads::stub(Threads* self, unsigned int id) {
-    self->worker(id, &self->m_threads[id].runflag);
+    self->worker(id, &self->_threads[id].runflag);
 }
 // -----------------------------------------------------------
 }  // namespace lightcone

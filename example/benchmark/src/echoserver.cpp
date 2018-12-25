@@ -2,7 +2,7 @@
 
 namespace example {
 // -----------------------------------------------------------
-EchoServer::EchoServer() : lightcone::NetEngine(&m_lb) {
+EchoServer::EchoServer() : lightcone::NetEngine(&_lb) {
     // set_timeout(1000);
 }
 // -----------------------------------------------------------

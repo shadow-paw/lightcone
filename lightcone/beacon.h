@@ -38,8 +38,8 @@ class Beacon : private NonCopyable<Beacon>, private Threads {
  protected:
     // Protected Functions
     // -------------------------------------------------------
-    uint32_t myid() const { return m_service_id; }
-    uint32_t myservice() const { return m_service_type; }
+    uint32_t myid() const { return _service_id; }
+    uint32_t myservice() const { return _service_type; }
     bool remove_peer(const SockAddr& addr);
 
     // Interface
@@ -70,17 +70,17 @@ class Beacon : private NonCopyable<Beacon>, private Threads {
         SockAddr addr;
     };
     // -------------------------------------------------------
-    Udp      m_udp;
-    SockAddr m_bcaddr;
-    uint64_t m_beacon_timer, m_beacon_interval, m_beacon_timeout;
+    Udp      _udp;
+    SockAddr _bcaddr;
+    uint64_t _beacon_timer, _beacon_interval, _beacon_timeout;
     // Service info
-    uint32_t m_app, m_port;
-    uint32_t m_service_type, m_service_id;
-    uint32_t m_reserving_id, m_reserving_next, m_reserving_rand;
-    bool     m_collided;
+    uint32_t _app, _port;
+    uint32_t _service_type, _service_id;
+    uint32_t _reserving_id, _reserving_next, _reserving_rand;
+    bool     _collided;
     // Service table
-    std::mutex              m_services_mutex;
-    std::list<SERVICE_NODE> m_services;
+    std::mutex              _services_mutex;
+    std::list<SERVICE_NODE> _services;
 
  private:
     // Internal Helper

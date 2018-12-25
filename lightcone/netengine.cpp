@@ -7,19 +7,19 @@
 namespace lightcone {
 // -----------------------------------------------------------
 NetEngine::NetEngine(LoadBalancer<uint32_t>* lb) {
-    m_lb = lb;
-    m_timeout = 0;
+    _lb = lb;
+    _timeout = 0;
 }
 void NetEngine::set_timeout(uint64_t timeout) {
-    m_timeout = timeout;
+    _timeout = timeout;
 }
-bool NetEngine::start(int num_worker) {
-    if (num_worker < 0) {
-        num_worker = SysInfo::cpu_core() * (-num_worker);
+bool NetEngine::start(int nu_worker) {
+    if (nu_worker < 0) {
+        nu_worker = SysInfo::cpu_core() * (-nu_worker);
     }
-    if (num_worker <= 0 || num_worker > kMaxWorker) return false;
-    m_lb->setup(1, num_worker);
-    return Threads::start((unsigned int)(num_worker+1));  // +1 for listen thread
+    if (nu_worker <= 0 || nu_worker > kMaxWorker) return false;
+    _lb->setup(1, nu_worker);
+    return Threads::start((unsigned int)(nu_worker+1));  // +1 for listen thread
 }
 void NetEngine::stop() {
     Threads::stop();
@@ -35,9 +35,9 @@ bool NetEngine::listen(const SockAddr& addr, std::function<bool(Tcp*)> initializ
         delete conn;
         return false;
     }
-    conn->m_managed = true;
+    conn->_managed = true;
     for (;;) {
-        if (m_inbox[0].post(conn)) return true;
+        if (_inbox[0].post(conn)) return true;
         msleep(1);
     }
 }
@@ -52,11 +52,11 @@ bool NetEngine::connect(const SockAddr& addr, std::function<bool(Tcp*)> initiali
         delete conn;
         return false;
     }
-    conn->m_managed = true;
-    conn->m_lb_hash = addr.hash();
-    int lb = m_lb->retain(conn->m_lb_hash);
+    conn->_managed = true;
+    conn->_lb_hash = addr.hash();
+    int lb = _lb->retain(conn->_lb_hash);
     for (;;) {
-        if (m_inbox[lb].post(conn)) return true;
+        if (_inbox[lb].post(conn)) return true;
         msleep(1);
     }
 }
@@ -76,9 +76,9 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
         // Take sockets from inbox
         {
             Tcp* conn;
-            while (m_inbox[id].get(&conn, 0)) {
+            while (_inbox[id].get(&conn, 0)) {
                 sockets.push_back(conn);
-                poller.add(conn->m_socket, NetPoller::kRead, conn);
+                poller.add(conn->_socket, NetPoller::kRead, conn);
             }
         }
         // Don't drain CPU if no socket
@@ -94,17 +94,17 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
             auto now = Calendar::now();
             while ((accepted = listener->accept(&remote))!= nullptr) {
                 accepted->set_nonblocking(true);
-                accepted->m_managed = true;
-                accepted->m_lb_hash = remote.hash();
-                accepted->m_state = Tcp::State::Connected;
+                accepted->_managed = true;
+                accepted->_lb_hash = remote.hash();
+                accepted->_state = Tcp::State::Connected;
 
                 if (!cb_net_accepted(accepted, listener, now)) {
                     accepted->close();
                 } else {
-                    accepted->m_atime = now;
+                    accepted->_atime = now;
                 }
-                int lb = m_lb->retain(accepted->m_lb_hash);
-                while (!m_inbox[lb].post(accepted)) {
+                int lb = _lb->retain(accepted->_lb_hash);
+                while (!_inbox[lb].post(accepted)) {
                     msleep(1);
                 }
             }
@@ -114,7 +114,7 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
     {
         Tcp* conn;
         // Kill unprocessed sockets
-        while (m_inbox[id].get(&conn, 0)) {
+        while (_inbox[id].get(&conn, 0)) {
             delete conn;
         }
         // Kill managed sockets
@@ -132,13 +132,13 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
         // Take sockets from inbox
         {
             Tcp* newconn = nullptr;
-            while (m_inbox[id].get(&newconn, 0)) {
+            while (_inbox[id].get(&newconn, 0)) {
                 sockets.push_back(newconn);
-                if (newconn->m_state == Tcp::State::Connnecting) {
-                    newconn->m_evmask = NetPoller::kWrite;
-                    poller.add(newconn->m_socket, NetPoller::kReadWrite, newconn);
+                if (newconn->_state == Tcp::State::Connnecting) {
+                    newconn->_evmask = NetPoller::kWrite;
+                    poller.add(newconn->_socket, NetPoller::kReadWrite, newconn);
                 } else {
-                    poller.add(newconn->m_socket, NetPoller::kRead, newconn);
+                    poller.add(newconn->_socket, NetPoller::kRead, newconn);
                 }
             }
         }
@@ -149,53 +149,53 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
         }
 
         auto now = Calendar::now();
-        auto timeout = m_timeout;
+        auto timeout = _timeout;
 
         // Walk socket list
         for (auto it=sockets.begin(); it != sockets.end(); ) {
             Tcp* conn = *it;
-            if (conn->m_state == Tcp::State::Closing) {
-                conn->m_state = Tcp::State::Closed;
+            if (conn->_state == Tcp::State::Closing) {
+                conn->_state = Tcp::State::Closed;
                 cb_net_closed(conn, now);
-                m_lb->release(conn->m_lb_hash);
-                poller.remove(conn->m_socket);
+                _lb->release(conn->_lb_hash);
+                poller.remove(conn->_socket);
                 delete conn;
                 it = sockets.erase(it);
                 continue;
-            } else if (conn->m_state == Tcp::State::Refused) {
-                conn->m_state = Tcp::State::Closed;
+            } else if (conn->_state == Tcp::State::Refused) {
+                conn->_state = Tcp::State::Closed;
                 cb_net_refused(conn, now);
-                m_lb->release(conn->m_lb_hash);
-                poller.remove(conn->m_socket);
+                _lb->release(conn->_lb_hash);
+                poller.remove(conn->_socket);
                 delete conn;
                 it = sockets.erase(it);
                 continue;
-            } else if (conn->m_state == Tcp::State::Connnecting) {
-                if ((conn->m_evmask & NetPoller::kWrite) == 0) {
-                    conn->m_evmask |= NetPoller::kWrite;
-                    poller.modify(conn->m_socket, NetPoller::kReadWrite, conn);
+            } else if (conn->_state == Tcp::State::Connnecting) {
+                if ((conn->_evmask & NetPoller::kWrite) == 0) {
+                    conn->_evmask |= NetPoller::kWrite;
+                    poller.modify(conn->_socket, NetPoller::kReadWrite, conn);
                 }
             }
             it++;
 
-            if (conn->m_state == Tcp::State::Connected) {
+            if (conn->_state == Tcp::State::Connected) {
                 // Check for timeout
-                if (timeout != 0 && now - conn->m_atime >= timeout) {
+                if (timeout != 0 && now - conn->_atime >= timeout) {
                     if (!cb_net_timeout(conn, now)) {
                         conn->close();
                         continue;
                     }
-                    conn->m_atime = now;
+                    conn->_atime = now;
                 }
-                if (conn->m_obuf.size() > 0) {
-                    if ((conn->m_evmask & NetPoller::kWrite) == 0) {
-                        conn->m_evmask |= NetPoller::kWrite;
-                        poller.modify(conn->m_socket, NetPoller::kReadWrite, conn);
+                if (conn->_obuf.size() > 0) {
+                    if ((conn->_evmask & NetPoller::kWrite) == 0) {
+                        conn->_evmask |= NetPoller::kWrite;
+                        poller.modify(conn->_socket, NetPoller::kReadWrite, conn);
                     }
                 } else {
-                    if ((conn->m_evmask & NetPoller::kWrite) != 0) {
-                        conn->m_evmask ^= NetPoller::kWrite;
-                        poller.modify(conn->m_socket, NetPoller::kRead, conn);
+                    if ((conn->_evmask & NetPoller::kWrite) != 0) {
+                        conn->_evmask ^= NetPoller::kWrite;
+                        poller.modify(conn->_socket, NetPoller::kRead, conn);
                     }
                 }
             }
@@ -204,16 +204,16 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
         poller.poll(100, [this, now](const RAW_SOCKET& fd, int event, void* ud) -> bool {
             Tcp* conn = static_cast<Tcp*>(ud);
             if (event & NetPoller::kWrite) {
-                conn->m_atime = now;
-                if (conn->m_state == Tcp::State::Connnecting) {
-                    conn->m_state = Tcp::State::Connected;
+                conn->_atime = now;
+                if (conn->_state == Tcp::State::Connnecting) {
+                    conn->_state = Tcp::State::Connected;
                     if (!cb_net_opened(conn, now)) {
                         conn->close();
                         return true;
                     }
                 }
                 conn->io_write();
-                if (conn->m_obuf.size() ==0) {
+                if (conn->_obuf.size() ==0) {
                     if (!cb_net_sent(conn, now)) {
                         conn->close();
                         return true;
@@ -221,9 +221,9 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
                 }
             }
             if (event & NetPoller::kRead) {
-                conn->m_atime = now;
+                conn->_atime = now;
                 conn->io_read();
-                if (conn->m_ibuf.size() > 0) {
+                if (conn->_ibuf.size() > 0) {
                     if (!cb_net_recv(conn, now)) {
                         conn->close();
                         return true;
@@ -237,7 +237,7 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
     {
         Tcp* conn;
         // Kill unprocessed sockets
-        while (m_inbox[id].get(&conn, 0)) {
+        while (_inbox[id].get(&conn, 0)) {
             delete conn;
         }
         // Kill managed sockets

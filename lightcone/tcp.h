@@ -95,9 +95,9 @@ friend class NetEngine;
     bool io_write();
 
  private:
-    Socket m_socket;
-    Buffer m_ibuf, m_obuf;
-    std::function<void(bool success)> m_cb_connect;
+    Socket _socket;
+    Buffer _ibuf, _obuf;
+    std::function<void(bool success)> _cb_connect;
 
  private:  // used by engine
     //! socket state
@@ -111,11 +111,11 @@ friend class NetEngine;
         Closing,
         Closed
     };
-    bool m_managed;
-    uint32_t m_lb_hash;
-    State m_state;
-    int m_evmask;
-    uint64_t m_atime;
+    bool _managed;
+    uint32_t _lb_hash;
+    State _state;
+    int _evmask;
+    uint64_t _atime;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

@@ -5,10 +5,12 @@
 #include <stddef.h>
 #include <string>
 #include <unordered_map>
+#include "copyable.h"
 
 namespace lightcone {
 // -----------------------------------------------------------
-class HttpRequestHeader : public std::unordered_multimap<std::string, std::string> {
+class HttpRequestHeader : public std::unordered_multimap<std::string, std::string>,
+                          private NonCopyable<HttpRequestHeader> {
  public:
     enum Version {
         HTTP_1_0 = 0x00010000,
@@ -31,7 +33,8 @@ class HttpRequestHeader : public std::unordered_multimap<std::string, std::strin
     ssize_t read_from(const void* text, size_t len);
     ssize_t write_to(void* buf, size_t len) const;
 };
-class HttpResponseHeader : public std::unordered_multimap<std::string, std::string> {
+class HttpResponseHeader : public std::unordered_multimap<std::string, std::string>,
+                           private NonCopyable<HttpResponseHeader> {
  public:
     enum Version {
         HTTP_1_0 = 0x00010000,

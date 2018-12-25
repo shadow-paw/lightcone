@@ -31,8 +31,8 @@ class Socket : private NonCopyable<Socket> {
     Socket& operator=(Socket&& o);
 
     // implicit cast to SOCKET
-    operator RAW_SOCKET& () { return m_fd; }
-    operator const RAW_SOCKET& () const { return m_fd; }
+    operator RAW_SOCKET& () { return _fd; }
+    operator const RAW_SOCKET& () const { return _fd; }
 
     //! Initialize socket
     //! \param[in] domain AF_INET or AF_INET6
@@ -42,7 +42,7 @@ class Socket : private NonCopyable<Socket> {
     bool init(int domain, int type, int proto);
     //! Check if socket is valid
     //! \return true if initialized, false otherwise.
-    bool is_valid() const { return m_fd != INVALID_SOCKET; }
+    bool is_valid() const { return _fd != INVALID_SOCKET; }
     //! wrapper to bind
     //! \param[in] addr Address and port to bind
     //! \return true on success, false on fail with no side-effect.
@@ -80,7 +80,7 @@ class Socket : private NonCopyable<Socket> {
 
  private:
     const RAW_SOCKET INVALID_SOCKET = (RAW_SOCKET)-1;
-    RAW_SOCKET m_fd;
+    RAW_SOCKET _fd;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

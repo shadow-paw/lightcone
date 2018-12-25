@@ -28,11 +28,11 @@ class Tester : public lightcone::NetEngine {
     virtual bool cb_net_sent(lightcone::Tcp* conn, uint64_t now);
 
  private:
-    lightcone::LoadBalancerRR<uint32_t> m_lb;
-    bool m_testing;
-    int m_concurrent;
-    size_t m_packet_size;
-    unsigned char* m_sendbuf;
+    lightcone::LoadBalancerRR<uint32_t> _lb;
+    bool _testing;
+    int _concurrent;
+    size_t _packet_size;
+    unsigned char* _sendbuf;
 };
 // -----------------------------------------------------------
 }  // namespace example
