@@ -66,7 +66,11 @@
 			"xstddef": "cpp",
 			"xstring": "cpp",
 			"xtr1common": "cpp",
-			"xutility": "cpp"
+			"xutility": "cpp",
+			"map": "cpp",
+			"string_view": "cpp",
+			"xtree": "cpp",
+			"iostream": "cpp"
 		},
 		"files.trimFinalNewlines": true,
 		"files.trimTrailingWhitespace": true

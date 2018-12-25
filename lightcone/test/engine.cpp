@@ -21,7 +21,7 @@ class TestServer : public lightcone::NetEngine {
     bool cb_net_refused(lightcone::Tcp* conn, uint64_t now) {
         return true;
     }
-    bool cb_net_accepted(lightcone::Tcp* conn, uint64_t now) {
+    bool cb_net_accepted(lightcone::Tcp* conn, lightcone::Tcp* from, uint64_t now) {
         accepted = true;
         conn->ud.emplace('mode', 1);
         return true;

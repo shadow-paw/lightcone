@@ -17,6 +17,8 @@ friend class NetEngine;
  public:
     //! convenient holder for user-defined data
     std::unordered_map<uint32_t, uintptr_t> ud;
+    //! convenient holder for user-defined protocol indicator
+    int protocol;
 
     //! default constructor
     Tcp();
@@ -78,7 +80,7 @@ friend class NetEngine;
     //! \param[in] reserve_size Length of memory to reserve for writing.
     //! \param[in] cb Callback to prepare send buffer, return number of bytes to commit.
     //! \return true on success, false on fail with no side-effect.
-    bool send(size_t reserve_size, std::function<size_t(uint8_t* wbuf, size_t wlen)> cb);
+    bool send(size_t reserve_size, std::function<ssize_t(uint8_t* wbuf, size_t wlen)> cb);
     //! Receive data
     //! \param[in] cb Callback to receive data, return number of bytes processed.
     //! \return true on success, false on fail with no side-effect.

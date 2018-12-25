@@ -12,7 +12,7 @@ class EchoServer : public lightcone::NetEngine {
  protected:
     virtual bool cb_net_timeout(lightcone::Tcp* conn, uint64_t now);
     virtual bool cb_net_refused(lightcone::Tcp* conn, uint64_t now);
-    virtual bool cb_net_accepted(lightcone::Tcp* conn, uint64_t now);
+    virtual bool cb_net_accepted(lightcone::Tcp* conn, lightcone::Tcp* from, uint64_t now);
     virtual bool cb_net_opened(lightcone::Tcp* conn, uint64_t now);
     virtual bool cb_net_closed(lightcone::Tcp* conn, uint64_t now);
     virtual bool cb_net_recv(lightcone::Tcp* conn, uint64_t now);

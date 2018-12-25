@@ -14,7 +14,7 @@ bool EchoServer::cb_net_refused(lightcone::Tcp* conn, uint64_t now) {
     return true;
 }
 // -----------------------------------------------------------
-bool EchoServer::cb_net_accepted(lightcone::Tcp* conn, uint64_t now) {
+bool EchoServer::cb_net_accepted(lightcone::Tcp* conn, lightcone::Tcp* from, uint64_t now) {
     return true;
 }
 // -----------------------------------------------------------

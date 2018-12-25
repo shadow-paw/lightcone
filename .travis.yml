@@ -11,9 +11,9 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-6
+            - g++-8
       before_install:
-        - eval "CC=gcc-6 && CXX=g++-6"
+        - eval "CC=gcc-8 && CXX=g++-8"
         - eval "PATH=${PATH}:$HOME/.local/bin"
         - pip install --user cpplint
       script:
@@ -22,7 +22,7 @@ matrix:
     # OSX
     - language: cpp
       os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.1
       script:
         - (cd lightcone && ./configure && make && make test)
 
