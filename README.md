@@ -27,11 +27,12 @@ Easy communication between cluster of servers. A brief list of features:
 - client session management and packet routing
 
 ## How To Build
-Please compile with GCC 8.
+To utilize c++17 facility please compile with GCC 8 or clang 4.
 ```
 cd lightcone
 ./configure
-make && make test
+CC=gcc-8 CXX=g++-8 make
+CC=gcc-8 CXX=g++-8 make test
 ```
 
 <!-- Markdown link & img dfn's -->

@@ -28,15 +28,15 @@ HttpRequestHeader& HttpRequestHeader::operator=(HttpRequestHeader&& o) {
     uri = std::move(o.uri);
     return *this;
 }
-ssize_t HttpRequestHeader::read_from(const char* text, size_t len) {
+ssize_t HttpRequestHeader::read_from(const void* text, size_t len) {
     if (!text) return -1;
     if (len < 9) return 0;  // min http size
     size_t pos = 0, next = 0;
-    auto in_text = std::string_view(text, len);
+    auto in_text = std::string_view((const char*)text, len);
     auto header_len = in_text.find("\r\n\r\n");
     if (header_len == std::string::npos) return 0;
     header_len += 4;
-    auto header = std::string_view(text, header_len);
+    auto header = std::string_view(in_text.data(), header_len);
     // first line
     pos = header.find("\r\n");
     if (pos == std::string::npos) return -1;  // invalid header
@@ -69,20 +69,21 @@ ssize_t HttpRequestHeader::read_from(const char* text, size_t len) {
     }
     return (ssize_t)header_len;
 }
-ssize_t HttpRequestHeader::write_to(char* buf, size_t len) const {
+ssize_t HttpRequestHeader::write_to(void* buf, size_t len) const {
     if (!buf || len == 0) return -1;
-    size_t wlen = (size_t)snprintf(buf, len,
+    char *b = static_cast<char*>(buf);
+    size_t wlen = (size_t)snprintf(b, len,
                                    "%s %s HTTP/%d.%d\r\n",
                                    action.c_str(), uri.c_str(),
                                    version >> 16, version & 0xffff);
     for (auto it=begin(); it != end(); ++it) {
         if (wlen >= len) return -1;
-        wlen += (size_t)snprintf(buf + wlen, len - wlen,
+        wlen += (size_t)snprintf(b + wlen, len - wlen,
                                  "%s: %s\r\n",
                                  it->first.c_str(), it->second.c_str());
     }
     if (wlen+2 >= len) return -1;
-    snprintf(buf + wlen, len - wlen, "\r\n");
+    snprintf(b + wlen, len - wlen, "\r\n");
     return (ssize_t)(wlen + 2);
 }
 // -----------------------------------------------------------
@@ -105,15 +106,15 @@ HttpResponseHeader& HttpResponseHeader::operator=(HttpResponseHeader&& o) {
     status = o.status; o.status = 0;
     return *this;
 }
-ssize_t HttpResponseHeader::read_from(const char* text, size_t len) {
+ssize_t HttpResponseHeader::read_from(const void* text, size_t len) {
     if (!text) return -1;
     if (len < 9) return 0;  // min http size
     size_t pos = 0, next = 0;
-    auto in_text = std::string_view(text, len);
+    auto in_text = std::string_view((const char*)text, len);
     auto header_len = in_text.find("\r\n\r\n");
     if (header_len == std::string::npos) return 0;
     header_len += 4;
-    auto header = std::string_view(text, header_len);
+    auto header = std::string_view(in_text.data(), header_len);
     // first line
     pos = header.find("\r\n");
     if (pos == std::string::npos) return -1;  // invalid header
@@ -147,20 +148,21 @@ ssize_t HttpResponseHeader::read_from(const char* text, size_t len) {
     }
     return (ssize_t)header_len;
 }
-ssize_t HttpResponseHeader::write_to(char* buf, size_t len) const {
+ssize_t HttpResponseHeader::write_to(void* buf, size_t len) const {
     if (!buf || len == 0) return -1;
-    size_t wlen = (size_t)snprintf(buf, len,
+    char *b = static_cast<char*>(buf);
+    size_t wlen = (size_t)snprintf(b, len,
                                    "HTTP/%d.%d %d %s\r\n",
                                    version >> 16, version & 0xffff,
                                    status, status_message(status));
     for (auto it=begin(); it != end(); ++it) {
         if (wlen >= len) return -1;
-        wlen += (size_t)snprintf(buf + wlen, len - wlen,
+        wlen += (size_t)snprintf(b + wlen, len - wlen,
                                  "%s: %s\r\n",
                                  it->first.c_str(), it->second.c_str());
     }
     if (wlen+2 >= len) return -1;
-    snprintf(buf + wlen, len - wlen, "\r\n");
+    snprintf(b + wlen, len - wlen, "\r\n");
     return (ssize_t)(wlen + 2);
 }
 const char* HttpResponseHeader::status_message(int status) {

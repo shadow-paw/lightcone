@@ -91,10 +91,18 @@ void NetEngine::worker_listen(unsigned int id, bool* runflag) {
             Tcp* listener = static_cast<Tcp*>(ud);
             Tcp* accepted;
             SockAddr remote;
+            auto now = Calendar::now();
             while ((accepted = listener->accept(&remote))!= nullptr) {
                 accepted->set_nonblocking(true);
                 accepted->m_managed = true;
                 accepted->m_lb_hash = remote.hash();
+                accepted->m_state = Tcp::State::Connected;
+
+                if (!cb_net_accepted(accepted, listener, now)) {
+                    accepted->close();
+                } else {
+                    accepted->m_atime = now;
+                }
                 int lb = m_lb->retain(accepted->m_lb_hash);
                 while (!m_inbox[lb].post(accepted)) {
                     msleep(1);
@@ -162,13 +170,6 @@ void NetEngine::worker_socket(unsigned int id, bool* runflag) {
                 delete conn;
                 it = sockets.erase(it);
                 continue;
-            } else if (conn->m_state == Tcp::State::Accepted) {
-                conn->m_state = Tcp::State::Connected;
-                if (!cb_net_accepted(conn, now)) {
-                    conn->close();
-                } else {
-                    conn->m_atime = now;
-                }
             } else if (conn->m_state == Tcp::State::Connnecting) {
                 if ((conn->m_evmask & NetPoller::kWrite) == 0) {
                     conn->m_evmask |= NetPoller::kWrite;

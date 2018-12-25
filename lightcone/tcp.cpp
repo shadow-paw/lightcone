@@ -5,6 +5,7 @@
 namespace lightcone {
 // -----------------------------------------------------------
 Tcp::Tcp() {
+    protocol = 0;
     m_managed = false;
     m_state = State::Uninitalized;
     m_evmask = 0;
@@ -12,12 +13,16 @@ Tcp::Tcp() {
 Tcp::~Tcp() {
 }
 Tcp::Tcp(Tcp&& o) {
+    protocol = o.protocol; o.protocol = 0;
+    ud = std::move(o.ud);
     m_socket = std::move(o.m_socket);
     m_ibuf = std::move(o.m_ibuf);
     m_obuf = std::move(o.m_obuf);
     m_state = o.m_state; o.m_state = State::Uninitalized;
 }
 Tcp& Tcp::operator=(Tcp&& o) {
+    protocol = o.protocol; o.protocol = 0;
+    ud = std::move(o.ud);
     m_socket = std::move(o.m_socket);
     m_ibuf = std::move(o.m_ibuf);
     m_obuf = std::move(o.m_obuf);
@@ -124,10 +129,12 @@ bool Tcp::send(const void* data, size_t datalen) {
     m_obuf.reserve_end(datalen);
     return true;
 }
-bool Tcp::send(size_t reserve_size, std::function<size_t(uint8_t* wbuf, size_t wlen)> cb) {
+bool Tcp::send(size_t reserve_size, std::function<ssize_t(uint8_t* wbuf, size_t wlen)> cb) {
     uint8_t* wbuf = nullptr;
     if (!m_obuf.reserve_begin(&wbuf, reserve_size)) return false;
-    m_obuf.reserve_end(cb(wbuf, reserve_size));
+    auto s = cb(wbuf, reserve_size);
+    m_obuf.reserve_end(s < 0 ? 0 : (size_t)s);
+    if (s < 0) close();
     return true;
 }
 bool Tcp::recv(std::function<size_t(const uint8_t* rbuf, size_t rlen)> cb) {

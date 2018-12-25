@@ -51,7 +51,7 @@ class NetEngine : private NonCopyable<NetEngine>, protected Threads {
     // -------------------------------------------------------
     virtual bool cb_net_timeout(Tcp* conn, uint64_t now) = 0;
     virtual bool cb_net_refused(Tcp* conn, uint64_t now) = 0;
-    virtual bool cb_net_accepted(Tcp* conn, uint64_t now) = 0;
+    virtual bool cb_net_accepted(Tcp* conn, Tcp* from, uint64_t now) = 0;
     virtual bool cb_net_opened(Tcp* conn, uint64_t now) = 0;
     virtual bool cb_net_closed(Tcp* conn, uint64_t now) = 0;
     virtual bool cb_net_sent(Tcp* conn, uint64_t now) = 0;

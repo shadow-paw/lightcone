@@ -28,8 +28,8 @@ class HttpRequestHeader : public std::unordered_multimap<std::string, std::strin
     HttpRequestHeader& operator=(HttpRequestHeader&& o);
 
     // serialize
-    ssize_t read_from(const char* text, size_t len);
-    ssize_t write_to(char* buf, size_t len) const;
+    ssize_t read_from(const void* text, size_t len);
+    ssize_t write_to(void* buf, size_t len) const;
 };
 class HttpResponseHeader : public std::unordered_multimap<std::string, std::string> {
  public:
@@ -50,11 +50,12 @@ class HttpResponseHeader : public std::unordered_multimap<std::string, std::stri
     HttpResponseHeader& operator=(HttpResponseHeader&& o);
 
     // serialize
-    ssize_t read_from(const char* text, size_t len);
-    ssize_t write_to(char* buf, size_t len) const;
+    ssize_t read_from(const void* text, size_t len);
+    ssize_t write_to(void* buf, size_t len) const;
+
+    static const char* status_message(int status);
 
  private:
-    static const char* status_message(int status);
     static const std::unordered_map<int, const char*> _status_messages;
 };
 // -----------------------------------------------------------

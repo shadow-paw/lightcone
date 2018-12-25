@@ -19,5 +19,6 @@
 #include "sysinfo.h"
 // http
 #include "httpheader.h"
+#include "httpserver.h"
 
 #endif  // LIGHTCONE_LIGHTCONE_H_
