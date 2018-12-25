@@ -28,12 +28,12 @@ class Buffer {
     Buffer& operator=(Buffer&& o);
 
     // implicit cast to uint8_t
-    operator uint8_t*() { return m_buffer + m_head; }
-    operator const uint8_t*() const { return m_buffer + m_head; }
+    operator uint8_t*() { return _buffer + _head; }
+    operator const uint8_t*() const { return _buffer + _head; }
 
     //! Get size of buffer
     //! \return size of buffer, in bytes
-    size_t size() const { return m_size; }
+    size_t size() const { return _size; }
     //! Release any allocated memory, reset to initial state
     void free();
     //! Ensure a certain size of memory after end of buffer.
@@ -59,9 +59,9 @@ class Buffer {
     bool realloc(size_t size);
 
  private:
-    uint8_t* m_buffer;
-    size_t   m_allocated;
-    size_t   m_head, m_size;
+    uint8_t* _buffer;
+    size_t   _allocated;
+    size_t   _head, _size;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

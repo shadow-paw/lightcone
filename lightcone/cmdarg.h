@@ -15,7 +15,7 @@ class CmdArg {
     std::string first(const std::string& key, const std::string& defvalue = "") const;
     bool all(const std::string& key, std::function<bool(const std::string& value)> cb) const;
  private:
-    std::unordered_multimap<std::string, std::string> m_args;
+    std::unordered_multimap<std::string, std::string> _args;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

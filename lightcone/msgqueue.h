@@ -33,41 +33,41 @@ class MessageQueue : private NonCopyable<MessageQueue<MSG>> {
     bool get(MSG* msg, int milliseconds);
 
  private:
-    std::mutex m_mutex;
-    std::condition_variable m_cond;
-    std::deque<MSG> m_queue;
+    std::mutex _mutex;
+    std::condition_variable _cond;
+    std::deque<MSG> _queue;
 };
 // -----------------------------------------------------------
 // Implementation
 // -----------------------------------------------------------
 template <typename MSG>
 bool MessageQueue<MSG>::empty() const {
-    return m_queue.empty();
+    return _queue.empty();
 }
 // -----------------------------------------------------------
 template <typename MSG>
 bool MessageQueue<MSG>::post(const MSG& msg) {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_queue.push_back(msg);
+    std::lock_guard<std::mutex> lock(_mutex);
+    _queue.push_back(msg);
     return true;
 }
 // -----------------------------------------------------------
 template <typename MSG>
 bool MessageQueue<MSG>::post(MSG&& msg) {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_queue.push_back(msg);
+    std::lock_guard<std::mutex> lock(_mutex);
+    _queue.push_back(msg);
     return true;
 }
 // -----------------------------------------------------------
 template <typename MSG>
 bool MessageQueue<MSG>::get(MSG* msg, int milliseconds) {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    if (m_queue.empty()) {
-        m_cond.wait_for(lock, std::chrono::microseconds(milliseconds));
-        if (m_queue.empty()) return false;
+    std::unique_lock<std::mutex> lock(_mutex);
+    if (_queue.empty()) {
+        _cond.wait_for(lock, std::chrono::microseconds(milliseconds));
+        if (_queue.empty()) return false;
     }
-    *msg = m_queue.front();
-    m_queue.pop_front();
+    *msg = _queue.front();
+    _queue.pop_front();
     return true;
 }
 // -----------------------------------------------------------

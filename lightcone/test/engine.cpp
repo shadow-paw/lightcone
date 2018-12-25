@@ -7,7 +7,7 @@ class TestServer : public lightcone::NetEngine {
  public:
     bool accepted, opened, closed, sent, recv, timeout;
 
-    TestServer() : lightcone::NetEngine(&m_lb) {
+    TestServer() : lightcone::NetEngine(&_lb) {
         accepted = opened = closed = sent = recv = false;
         set_timeout(1000);
     }
@@ -51,7 +51,7 @@ class TestServer : public lightcone::NetEngine {
     }
 
  private:
-    lightcone::LoadBalancerRR<uint32_t> m_lb;
+    lightcone::LoadBalancerRR<uint32_t> _lb;
 };
 // -----------------------------------------------------------
 bool engine_pingpong() {

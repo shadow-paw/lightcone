@@ -57,7 +57,7 @@ class Udp : private NonCopyable<Udp> {
     bool joinmcast(const SockAddr& addr);
 
  private:
-    Socket m_socket;
+    Socket _socket;
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

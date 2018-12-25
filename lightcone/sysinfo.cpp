@@ -18,7 +18,7 @@ int SysInfo::cpu_core() {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL, ptr;
     DWORD byteOffset, returnLen = 0;
-    int num_core = 0;
+    int nu_core = 0;
 
     GetLogicalProcessorInformation(buffer, &returnLen);
     if (returnLen <= 0) return 1;
@@ -32,20 +32,20 @@ int SysInfo::cpu_core() {
     while (byteOffset < returnLen) {
         switch (ptr->Relationship) {
         case RelationProcessorCore:
-            num_core++;
+            nu_core++;
             break;
         }
         byteOffset += sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
         ptr++;
     }
     free(buffer);
-    return num_core > 0 ? num_core : 1;
+    return nu_core > 0 ? nu_core : 1;
 
 #elif defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS)
-    int num_core = 1;
-    size_t s = sizeof(num_core);
-    sysctlbyname("hw.ncpu", &num_core, &s, NULL, 0);
-    return num_core > 0 ? num_core : 1;
+    int nu_core = 1;
+    size_t s = sizeof(nu_core);
+    sysctlbyname("hw.ncpu", &nu_core, &s, NULL, 0);
+    return nu_core > 0 ? nu_core : 1;
 
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_ANDROID)
     char sz[64];
@@ -56,8 +56,8 @@ int SysInfo::cpu_core() {
             return 1;
         }
         pclose(f);
-        int num_core = atoi(sz);
-        return num_core > 0 ? num_core : 1;
+        int nu_core = atoi(sz);
+        return nu_core > 0 ? nu_core : 1;
     } return 1;
 
 #elif defined(PLATFORM_SOLARIS)
@@ -69,8 +69,8 @@ int SysInfo::cpu_core() {
             return 1;
         }
         pclose(f);
-        int num_core = atoi(sz);
-        return num_core > 0 ? num_core : 1;
+        int nu_core = atoi(sz);
+        return nu_core > 0 ? nu_core : 1;
     } return 1;
 #else
   #error Not Implemented!

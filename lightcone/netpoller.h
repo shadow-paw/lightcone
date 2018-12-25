@@ -73,17 +73,17 @@ class NetPoller : private NonCopyable<NetPoller> {
         int event;
         void* ud;
     };
-    std::list<SelectItem> m_list;
+    std::list<SelectItem> _list;
 #elif LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_EPOLL
     static const size_t kEventCapacity = 1024;
-    int m_queue;
-    struct epoll_event* m_events;
+    int _queue;
+    struct epoll_event* _events;
 #elif LIGHTCONE_POLL_IMPLEMENTATION == LIGHTCONE_POLL_KQUEUE
     static const size_t kEventCapacity = 1024;
-    int m_queue;
-    struct kevent* m_events;
-    struct kevent* m_changes;
-    int m_changes_count, m_changes_capacity;
+    int _queue;
+    struct kevent* _events;
+    struct kevent* _changes;
+    int _changes_count, _changes_capacity;
     bool ensure_changes_size(int size);
 #endif
 };
