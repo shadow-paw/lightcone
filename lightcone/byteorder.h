@@ -41,7 +41,7 @@ class ByteOrder {
     static uint16_t eltoh(uint16_t v) { return v; }
     static uint32_t eltoh(uint32_t v) { return v; }
     static uint64_t eltoh(uint64_t v) { return v; }
-  #if defined(WIN32) || defined(WIN64)
+  #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     // host to network order
     static uint16_t hton(uint16_t v) { return _byteswap_ushort(v); }
     static uint32_t hton(uint32_t v) { return _byteswap_ulong(v); }
