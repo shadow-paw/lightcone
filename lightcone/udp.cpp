@@ -56,7 +56,7 @@ ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout)
     if (events <= 0) return 0;
     socklen_t slen = sizeof(sender->_addr);
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
-    return (ssize_t)recvfrom(_socket, reinterpret_cast<char*>(buf), reinterpret_cast<int>(len), 0, reinterpret_cast<struct sockaddr*>(&sender->_addr), &slen);
+    return (ssize_t)recvfrom(_socket, reinterpret_cast<char*>(buf), static_cast<int>(len), 0, reinterpret_cast<struct sockaddr*>(&sender->_addr), &slen);
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     return recvfrom(_socket, buf, len, 0, reinterpret_cast<struct sockaddr*>(&sender->_addr), &slen);
 #else

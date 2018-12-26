@@ -33,9 +33,9 @@ SockAddr& SockAddr::operator=(SockAddr&& o) {
 std::pair<const struct sockaddr*, socklen_t> SockAddr::get_addr() const {
     switch (_addr.base.sa_family) {
     case AF_INET:
-        return std::make_pair(reinterpret_cast<const struct sockaddr*>(&_addr.ip4), sizeof(_addr.ip4));
+        return std::make_pair(reinterpret_cast<const struct sockaddr*>(&_addr.ip4), (socklen_t)sizeof(_addr.ip4));
     case AF_INET6:
-        return std::make_pair(reinterpret_cast<const struct sockaddr*>(&_addr.ip6), sizeof(_addr.ip6));
+        return std::make_pair(reinterpret_cast<const struct sockaddr*>(&_addr.ip6), (socklen_t)sizeof(_addr.ip6));
     default:
         return std::make_pair(nullptr, 0);
     }

@@ -83,7 +83,7 @@ SockAddr Socket::get_remote() const {
 bool Socket::set_nonblocking(bool b) {
     if (_fd == INVALID_SOCKET) return false;
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
-    uint64_t a = b ? 1 : 0;
+    u_long a = b ? 1 : 0;
     ioctlsocket(_fd, FIONBIO, &a);
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
     if (b) {

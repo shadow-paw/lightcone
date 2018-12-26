@@ -79,8 +79,10 @@ class Socket : private NonCopyable<Socket> {
     bool is_error() const;
 
  private:
-    const RAW_SOCKET INVALID_SOCKET = (RAW_SOCKET)-1;
     RAW_SOCKET _fd;
+#if defined(PLATFORM_LINUX) || defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_ANDROID) || defined(PLATFORM_SOLARIS)
+    const RAW_SOCKET INVALID_SOCKET = (RAW_SOCKET)-1;
+#endif
 };
 // -----------------------------------------------------------
 }  // namespace lightcone

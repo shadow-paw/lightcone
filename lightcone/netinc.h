@@ -1,6 +1,11 @@
 #ifndef LIGHTCONE_NETINC_H__
 #define LIGHTCONE_NETINC_H__
 
+#include "ssize_t.h"
+#ifndef FD_SETSIZE
+    #define FD_SETSIZE 8192
+#endif
+
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
     #define WIN32_LEAN_AND_MEAN
     #include <winsock2.h>

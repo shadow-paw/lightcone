@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <string>
 #include <unordered_map>
+#include "ssize_t.h"
 #include "copyable.h"
 
 namespace lightcone {

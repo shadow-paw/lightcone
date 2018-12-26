@@ -214,7 +214,7 @@ bool Tcp::io_write() {
     wlen = _obuf.size();
     if (wlen > 0 && wbuf != nullptr) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)
-        len = (ssize_t)::send(_socket, reinterpret_cast<char*>(buf), reinterpret_cast<int>(wlen), 0);
+        len = (ssize_t)::send(_socket, reinterpret_cast<char*>(wbuf), static_cast<int>(wlen), 0);
 #elif defined(PLATFORM_LINUX) || defined(PLATFORM_ANDROID)
         len = ::send(_socket, wbuf, wlen, MSG_NOSIGNAL);
 #elif defined(PLATFORM_BSD) || defined(PLATFORM_MAC) || defined(PLATFORM_IOS) || defined(PLATFORM_SOLARIS)

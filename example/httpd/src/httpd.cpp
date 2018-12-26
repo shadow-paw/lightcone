@@ -35,7 +35,7 @@ bool HttpServer::cb_net_closed(lightcone::Tcp* conn, uint64_t now) {
 bool HttpServer::cb_net_recv(lightcone::Tcp* conn, uint64_t now) {
     switch (conn->protocol) {
     case 'http':
-        return http_recv(conn, now);
+        return http_recv(conn, now +1);
     default:
         return false;
     }

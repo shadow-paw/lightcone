@@ -1,3 +1,4 @@
+#include "threads.h"
 #include "netpoller.h"
 
 namespace lightcone {
@@ -151,6 +152,10 @@ bool NetPoller::poll(unsigned int milliseconds, std::function<bool(const RAW_SOC
         if (item.event & kRead) FD_SET(item.fd, &rfds);
         if (item.event & kWrite) FD_SET(item.fd, &wfds);
         if (maxfd < item.fd ) maxfd = item.fd;
+    }
+    if (maxfd == 0) {
+        Threads::usleep(1);
+        return false;
     }
     int events = select(static_cast<int>(maxfd+1), &rfds, &wfds, &efds, &tv);
     if (events <= 0) return false;
