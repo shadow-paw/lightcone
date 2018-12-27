@@ -2,7 +2,11 @@
 > lightweight c++ optimized network engine
 
 [![C++ Version][cpp-image]][cpp-url]
-[![TravisCI][travis-image]][travis-url]
+[![TravisCI][travis-image]][travis-url]  
+![BSD][target-bsd-image]
+![Linux][target-linux-image]
+![Mac][target-mac-image]
+![Windows][target-win-image]
 
 `LightCoNE` is a c++ server development kit. It consist of a network engine, along with some higher level facilities for
 developing inter-connected server cluster.
@@ -40,3 +44,7 @@ CC=gcc-8 CXX=g++-8 make test
 [cpp-url]: https://en.wikipedia.org/wiki/C%2B%2B14
 [travis-image]: https://travis-ci.org/shadow-paw/lightcone.svg?branch=master
 [travis-url]: https://travis-ci.org/shadow-paw/lightcone
+[target-bsd-image]: https://img.shields.io/badge/target-bsd-blue.svg
+[target-linux-image]: https://img.shields.io/badge/target-linux-blue.svg
+[target-mac-image]: https://img.shields.io/badge/target-mac-blue.svg
+[target-win-image]: https://img.shields.io/badge/target-windows-blue.svg
