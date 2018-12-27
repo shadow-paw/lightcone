@@ -49,7 +49,6 @@ bool HttpServer::cb_net_sent(lightcone::Tcp* conn, uint64_t now) {
     }
 }
 bool HttpServer::cb_http(lightcone::Tcp* conn, const lightcone::HttpRequestHeader& header, const uint8_t* data, size_t datalen, uint64_t now) {
-    printf("uri: %s\n", header.uri.c_str());
     if (header.uri.compare("/foo") == 0) {
         return http_response(conn, 200, "bar");
     }
