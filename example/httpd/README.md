@@ -37,3 +37,37 @@ Test for: `GET /`
     vus........................: 100     min=100 max=100
     vus_max....................: 100     min=100 max=100
 ```
+
+Same test on [nodejs reference implementation](stress/nodejs-app.js)  
+Run with `docker run --rm -it $(docker build -q .)`  
+```
+          /\      |‾‾|  /‾‾/  /‾/   
+     /\  /  \     |  |_/  /  / /    
+    /  \/    \    |      |  /  ‾‾\  
+   /          \   |  |‾\  \ | (_) | 
+  / __________ \  |__|  \__\ \___/ .io
+
+  execution: local
+     output: -
+     script: /stress/stress.js
+
+    duration: 30s, iterations: -
+         vus: 100, max: 100
+
+    done [==========================================================] 30s / 30s
+
+    data_received..............: 251 MB  8.4 MB/s
+    data_sent..................: 98 MB   3.3 MB/s
+    http_req_blocked...........: avg=1.96µs min=691ns   med=1.34µs max=36.97ms p(90)=1.75µs  p(95)=1.91µs 
+    http_req_connecting........: avg=389ns  min=0s      med=0s     max=36.93ms p(90)=0s      p(95)=0s     
+    http_req_duration..........: avg=1.86ms min=98.57µs med=1.66ms max=50.29ms p(90)=2.99ms  p(95)=3.75ms 
+    http_req_receiving.........: avg=12.3µs min=3.57µs  med=8.02µs max=15.26ms p(90)=13.17µs p(95)=16.53µs
+    http_req_sending...........: avg=9.04µs min=3.8µs   med=6.81µs max=37.58ms p(90)=9.39µs  p(95)=11.71µs
+    http_req_tls_handshaking...: avg=0s     min=0s      med=0s     max=0s      p(90)=0s      p(95)=0s     
+    http_req_waiting...........: avg=1.84ms min=84.88µs med=1.64ms max=50.14ms p(90)=2.96ms  p(95)=3.72ms 
+    http_reqs..................: 1224749 40824.861892/s
+    iteration_duration.........: avg=1.92ms min=136.5µs med=1.71ms max=87.2ms  p(90)=3.06ms  p(95)=3.84ms 
+    iterations.................: 1224681 40822.595232/s
+    vus........................: 100     min=100 max=100
+    vus_max....................: 100     min=100 max=100
+```
