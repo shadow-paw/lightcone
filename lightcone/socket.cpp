@@ -67,18 +67,18 @@ void Socket::close() {
     }
 }
 SockAddr Socket::get_local() const {
-    SockAddr addr;
-    if (_fd == INVALID_SOCKET) return addr;
-    socklen_t slen = sizeof(addr._addr);
-    if (getsockname(_fd, &addr._addr.base, &slen) != 0) return addr;
-    return addr;
+    if (_fd == INVALID_SOCKET) return {};
+    struct sockaddr addr;
+    socklen_t slen = sizeof(addr);
+    if (getsockname(_fd, &addr, &slen) != 0) return {};
+    return SockAddr(addr);
 }
 SockAddr Socket::get_remote() const {
-    SockAddr addr;
-    if (_fd == INVALID_SOCKET) return addr;
-    socklen_t slen = sizeof(addr._addr);
-    if (getpeername(_fd, &addr._addr.base, &slen) != 0) return addr;
-    return addr;
+    if (_fd == INVALID_SOCKET) return {};
+    struct sockaddr addr;
+    socklen_t slen = sizeof(addr);
+    if (getpeername(_fd, &addr, &slen) != 0) return {};
+    return SockAddr(addr);
 }
 bool Socket::set_nonblocking(bool b) {
     if (_fd == INVALID_SOCKET) return false;

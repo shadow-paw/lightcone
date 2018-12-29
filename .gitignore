@@ -84,3 +84,4 @@ Makefile
 *.test
 *.bin
 lightcone/doxygen/
+lightcone.code-workspace

@@ -40,7 +40,7 @@ SockAddr Tcp::get_remote() const {
 }
 bool Tcp::listen(const SockAddr& addr, bool reuse) {
     if (_socket.is_valid()) return false;
-    if (!_socket.init(addr.get_domain(), SOCK_STREAM, IPPROTO_TCP)) return false;
+    if (!_socket.init(addr.get_family(), SOCK_STREAM, IPPROTO_TCP)) return false;
     if (!_socket.set_nonblocking(true)) goto fail;
     if (reuse) {
         if (!_socket.set_reuse()) goto fail;
@@ -70,7 +70,7 @@ bool Tcp::connect(const SockAddr& addr, bool nonblocking, std::function<void(boo
     if (_socket.is_valid()) return false;
     _ibuf.free();
     _obuf.free();
-    if (!_socket.init(addr.get_domain(), SOCK_STREAM, IPPROTO_TCP)) return false;
+    if (!_socket.init(addr.get_family(), SOCK_STREAM, IPPROTO_TCP)) return false;
     if (!_socket.set_nonblocking(nonblocking)) goto fail;
     if (!_socket.connect(addr)) {
 #if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64)

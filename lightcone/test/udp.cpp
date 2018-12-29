@@ -7,7 +7,8 @@ bool udp_pingpong() {
     lightcone::Udp udp1, udp2;
     lightcone::SockAddr addr;
     if (!addr.set_ip4("0.0.0.0", 8888)) return false;
-    if (!udp1.open(addr.get_domain(), true) || !udp2.open(addr.get_domain(), true)) return false;
+    if (!udp1.open(addr.get_family(), true)) return false;
+    if (!udp2.open(addr.get_family(), true)) return false;
     if (!udp1.bind(addr, true)) return false;
     for (int i=0; i < 10; i++) {
         const char payload[] = "HELLO";
@@ -25,8 +26,8 @@ bool udp_mcast() {
     lightcone::SockAddr addr1, addr2;
     if (!addr1.set_ip4("0.0.0.0", 8888)) return false;
     if (!addr2.set_ip4("239.0.0.4", 8888)) return false;
-    if (!udp1.open(addr1.get_domain(), true)) return false;
-    if (!udp2.open(addr2.get_domain(), true)) return false;
+    if (!udp1.open(addr1.get_family(), true)) return false;
+    if (!udp2.open(addr2.get_family(), true)) return false;
     if (!udp1.bind(addr1, true)) return false;
     if (!udp1.joinmcast(addr2)) return false;
     if (!udp2.joinmcast(addr2)) return false;
@@ -47,8 +48,8 @@ bool udp_mcast6() {
     lightcone::SockAddr addr2;
     if (!addr1.set_ip6("::", 8888)) return false;
     if (!addr2.set_ip6("ff05:0:0:0:0:0:0:2", 8888)) return false;
-    if (!udp1.open(addr1.get_domain(), true)) return false;
-    if (!udp2.open(addr2.get_domain(), true)) return false;
+    if (!udp1.open(addr1.get_family(), true)) return false;
+    if (!udp2.open(addr2.get_family(), true)) return false;
     if (!udp1.bind(addr1, true)) return false;
     if (!udp1.joinmcast(addr2)) return false;
     if (!udp2.joinmcast(addr2)) return false;
