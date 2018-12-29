@@ -41,7 +41,7 @@ bool Beacon::init(const SockAddr& mcast_addr,
     } else {
         return false;
     }
-    if (!_udp.open(inaddr.get_domain(), true)) return false;
+    if (!_udp.open(inaddr.get_family(), true)) return false;
     if (!_udp.bind(inaddr, true)) return false;
     if (!_udp.joinmcast(mcast_addr)) return false;
     return true;

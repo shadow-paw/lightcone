@@ -10,9 +10,9 @@ Udp& Udp::operator=(Udp&& o) {
     _socket = std::move(o._socket);
     return *this;
 }
-bool Udp::open(int domain, bool nonblocking) {
+bool Udp::open(int family, bool nonblocking) {
     if (_socket.is_valid()) return false;
-    if (!_socket.init(domain, SOCK_DGRAM, IPPROTO_UDP)) return false;
+    if (!_socket.init(family, SOCK_DGRAM, IPPROTO_UDP)) return false;
     if (!_socket.set_nonblocking(nonblocking)) {
         _socket.close();
         return false;
@@ -64,7 +64,7 @@ ssize_t Udp::recv(SockAddr* sender, void* buf, size_t len, unsigned int timeout)
 #endif
 }
 bool Udp::joinmcast(const SockAddr& addr) {
-    switch (addr._addr.base.sa_family) {
+    switch (addr.get_family()) {
     case AF_INET: {
             struct ip_mreq mreq;
             memcpy (&mreq.imr_multiaddr.s_addr, &addr._addr.ip4.sin_addr, sizeof(struct in_addr));

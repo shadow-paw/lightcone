@@ -42,10 +42,13 @@ friend class Udp;
     //! move assignment
     //! \param[in] o Object to move
     SockAddr& operator=(SockAddr&& o);
+    //! assignment
+    //! \param[in] addr socket addresss
+    SockAddr& operator=(const sockaddr& addr);
 
-    int get_domain() const { return _addr.base.sa_family; }
-    bool is_ip4() const { return _addr.base.sa_family == AF_INET; }
-    bool is_ip6() const { return _addr.base.sa_family == AF_INET6; }
+    int get_family() const { return static_cast<int>(_family); }
+    bool is_ip4() const { return _family == AF_INET; }
+    bool is_ip6() const { return _family == AF_INET6; }
     std::pair<const struct sockaddr*, socklen_t> get_addr() const;
 
     uint32_t get_ip4() const;
@@ -83,8 +86,8 @@ friend class Udp;
     uint32_t hash() const;
 
  private:
+    decltype(sockaddr::sa_family) _family;
     union {
-        struct sockaddr     base;
         struct sockaddr_in  ip4;
         struct sockaddr_in6 ip6;
     } _addr;
