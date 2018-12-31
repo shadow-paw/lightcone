@@ -2,6 +2,7 @@
 > lightweight c++ optimized network engine
 
 [![C++ Version][cpp-image]][cpp-url]
+[![doc][doc-image]][doc-url]
 [![TravisCI][travis-image]][travis-url]  
 ![BSD][target-bsd-image]
 ![Linux][target-linux-image]
@@ -42,6 +43,8 @@ CC=gcc-8 CXX=g++-8 make test
 <!-- Markdown link & img dfn's -->
 [cpp-image]: https://img.shields.io/badge/c%2B%2B-17-blue.svg
 [cpp-url]: https://en.wikipedia.org/wiki/C%2B%2B14
+[doc-image]: https://img.shields.io/badge/doc-doxygen-orange.svg
+[doc-url]: https://shadow-paw.github.io/lightcone/
 [travis-image]: https://travis-ci.org/shadow-paw/lightcone.svg?branch=master
 [travis-url]: https://travis-ci.org/shadow-paw/lightcone
 [target-bsd-image]: https://img.shields.io/badge/target-bsd-blue.svg
