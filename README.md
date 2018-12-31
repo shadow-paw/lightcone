@@ -4,10 +4,10 @@
 [![C++ Version][cpp-image]][cpp-url]
 [![doc][doc-image]][doc-url]
 [![TravisCI][travis-image]][travis-url]  
-![BSD][target-bsd-image]
-![Linux][target-linux-image]
-![Mac][target-mac-image]
-![Windows][target-win-image]
+[![BSD][target-bsd-image]](#bsd)
+[![Linux][target-linux-image]](#linux)
+[![Mac][target-mac-image]](#mac-os-x)
+[![Windows][target-win-image]](#windows)
 
 `LightCoNE` is a c++ server development kit. It consist of a network engine, along with some higher level facilities for
 developing inter-connected server cluster.
@@ -31,13 +31,52 @@ Easy communication between cluster of servers. A brief list of features:
 - channel-based inter-server communication
 - client session management and packet routing
 
+## Performance
+*Capacity & Performance* is a key goal for lightcone, and we have some stunning results.
+- [http server](example/httpd) built on top of lightcone.
+
 ## How To Build
-To utilize c++17 facility please compile with GCC 8 or clang 4.
+
+#### Windows
+Download [Visual Studio Community 2017](https://visualstudio.microsoft.com/downloads/). Open *lightcone.sln*.
+
+#### Mac OS X
+Install [xcode](https://developer.apple.com/xcode/) and command line tool.
+```
+cd lightcone
+./configure
+make
+make test
+```
+
+#### Linux
+Install gcc-7 or above.
+```
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install gcc-8 g++-8
+```
 ```
 cd lightcone
 ./configure
 CC=gcc-8 CXX=g++-8 make
 CC=gcc-8 CXX=g++-8 make test
+```
+
+#### BSD
+Install gcc-8 with port.
+```
+> su
+# cd /usr/port/lang/gcc-8
+# make install clean
+```
+> NOTE: FreeBSD 12 comes with gcc-7 which supports c++17, you may skip the above installation.
+
+```
+cd lightcone
+./configure
+gmake
+gmake test
 ```
 
 <!-- Markdown link & img dfn's -->
