@@ -56,6 +56,7 @@ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 sudo apt-get install gcc-8 g++-8
 ```
+> NOTE: Ubuntu 18.04 comes with gcc-7 which supports c++17, you may skip the above installation.
 ```
 cd lightcone
 ./configure
@@ -71,7 +72,6 @@ Install gcc-8 with port.
 # make install clean
 ```
 > NOTE: FreeBSD 12 comes with gcc-7 which supports c++17, you may skip the above installation.
-
 ```
 cd lightcone
 ./configure
