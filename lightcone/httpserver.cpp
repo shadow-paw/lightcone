@@ -65,10 +65,11 @@ bool HttpServer::http_response(Tcp* conn, int status, const char* text) {
 }
 bool HttpServer::http_response(Tcp* conn, const HttpResponseHeader& header, const void* data, size_t datalen) {
     if (data && !datalen) return false;
-    return conn->send(8192, [&header, data, datalen](uint8_t* wbuf, size_t wlen) -> ssize_t {
-        auto header_len = header.write_to(wbuf, wlen);
+    return conn->send(16384 + datalen, [&header, data, datalen](uint8_t* wbuf, size_t wlen) -> ssize_t {
+        auto header_len = header.write_to(wbuf, 16384);
         if (header_len < 0) return -1;
         if (data) {
+            if ((size_t)header_len + datalen > wlen) return -1;
             memcpy(wbuf + header_len, data, datalen);
             return header_len + (ssize_t)datalen;
         }
