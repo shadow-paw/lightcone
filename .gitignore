@@ -85,3 +85,4 @@ Makefile
 *.bin
 lightcone/doxygen/
 lightcone.code-workspace
+.vscode/
