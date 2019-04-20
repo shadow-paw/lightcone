@@ -34,6 +34,13 @@ friend class NetEngine;
     //! \param[in] b true to set socket to non-blocking, false to blocking
     //! \return true on success, false on fail with no side-effect.
     bool set_nonblocking(bool b);
+    //! Adjust tcp keepalive options
+    //! \param[in] enable enable or disable tcp keepalive
+    //! \param[in] idle start probe after idle for N seconds, e.g. 120. See net.ipv4.tcp_keepalive_time
+    //! \param[in] interval probe interval, in seconds, e.g. 30. See net.ipv4.tcp_keepalive_intvl
+    //! \param[in] probes Number of unacknowledged probe before consider the connection dead, e.g. 8. See net.ipv4.tcp_keepalive_probes
+    //! \return true on success, false on fail with no side-effect.
+    bool set_keepalive(bool enable, int idle, int interval, int probes);
     //! Get local address, i.e. getsockname()
     //! \return local address
     SockAddr get_local() const;

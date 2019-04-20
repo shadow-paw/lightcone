@@ -25,6 +25,7 @@
     #include <errno.h>
     #include <fcntl.h>
     #include <netinet/in.h>
+    #include <netinet/tcp.h>
     #include <arpa/inet.h>
     #include <net/if.h>
     #include <net/if_dl.h>
@@ -40,6 +41,7 @@
     #include <fcntl.h>
     #include <arpa/inet.h>
     #include <netinet/in.h>
+    #include <netinet/tcp.h>
     #include <net/if.h>
     #include <sys/epoll.h>
 
@@ -54,6 +56,7 @@
     #include <fcntl.h>
     #include <arpa/inet.h>
     #include <netinet/in.h>
+    #include <netinet/tcp.h>
     #include <net/if.h>
     #include <net/route.h>
     #include <net/if_dl.h>
