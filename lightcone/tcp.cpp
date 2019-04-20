@@ -32,6 +32,22 @@ Tcp& Tcp::operator=(Tcp&& o) {
 bool Tcp::set_nonblocking(bool b) {
     return _socket.set_nonblocking(b);
 }
+bool Tcp::set_keepalive(bool enable, int idle, int interval, int probes) {
+    if (enable) {
+        int opt = 1;
+        if (setsockopt(_socket, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<const char*>(&opt), (socklen_t)sizeof(opt)) != 0) return false;
+#if defined(PLATFORM_WIN32) || defined(PLATFORM_WIN64) || defined(PLATFORM_LINUX) || defined(PLATFORM_ANDROID) || defined(PLATFORM_BSD)
+        // NOTE: Not supported on Mac OS X
+        if (setsockopt(_socket, IPPROTO_TCP, TCP_KEEPIDLE, reinterpret_cast<const char*>(&idle), (socklen_t)sizeof(idle)) != 0) return false;
+        if (setsockopt(_socket, IPPROTO_TCP, TCP_KEEPINTVL, reinterpret_cast<const char*>(&interval), (socklen_t)sizeof(interval)) != 0) return false;
+        if (setsockopt(_socket, IPPROTO_TCP, TCP_KEEPCNT, reinterpret_cast<const char*>(&probes), (socklen_t)sizeof(probes)) != 0) return false;
+#endif
+    } else {
+        int opt = 0;
+        if (setsockopt(_socket, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<const char*>(&opt), (socklen_t)sizeof(opt)) != 0) return false;
+    }
+    return true;
+}
 SockAddr Tcp::get_local() const {
     return _socket.get_local();
 }

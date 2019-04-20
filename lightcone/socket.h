@@ -43,6 +43,9 @@ class Socket : private NonCopyable<Socket> {
     //! Check if socket is valid
     //! \return true if initialized, false otherwise.
     bool is_valid() const { return _fd != INVALID_SOCKET; }
+    //! Check if socket error occured
+    //! \return true if error occured
+    bool is_error() const;
     //! wrapper to bind
     //! \param[in] addr Address and port to bind
     //! \return true on success, false on fail with no side-effect.
@@ -74,9 +77,6 @@ class Socket : private NonCopyable<Socket> {
     //! Enable reuse address
     //! \return true on success, false on fail with no side-effect.
     bool set_reuse();
-    //! Check if socket error occured
-    //! \return true if error occured
-    bool is_error() const;
 
  private:
     RAW_SOCKET _fd;
