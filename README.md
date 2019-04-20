@@ -68,7 +68,7 @@ CC=gcc-8 CXX=g++-8 make test
 Install gcc-8 with port.
 ```
 > su
-# cd /usr/port/lang/gcc-8
+# cd /usr/port/lang/gcc8
 # make install clean
 ```
 > NOTE: FreeBSD 12 comes with gcc-7 which supports c++17, you may skip the above installation.
