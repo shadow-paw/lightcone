@@ -23,6 +23,8 @@ matrix:
         - pip install --user cpplint
       script:
         - (cd lightcone && ./configure && make lint && make && make test)
+        - (cd example/benchmark && ./configure && make lint && make)
+        - (cd example/httpd && ./configure && make lint && make)
 
     # OSX
     - language: cpp
@@ -30,6 +32,8 @@ matrix:
       osx_image: xcode10.1
       script:
         - (cd lightcone && ./configure && make && make test)
+        - (cd example/benchmark && ./configure && make)
+        - (cd example/httpd && ./configure && make)
 
     # doxygen
     - language: cpp
