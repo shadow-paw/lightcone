@@ -6,7 +6,7 @@ HttpServer::HttpServer() : lightcone::NetEngine(&_lb), lightcone::HttpServer() {
     set_timeout(5000);
 }
 bool HttpServer::cb_net_timeout(lightcone::Tcp* conn, uint64_t now) {
-    return true;
+    return false;
 }
 bool HttpServer::cb_net_refused(lightcone::Tcp* conn, uint64_t now) {
     return true;

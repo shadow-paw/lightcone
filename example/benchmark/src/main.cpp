@@ -42,7 +42,7 @@ int client_main(const lightcone::CmdArg& args) {
                                     std::stoi(args.first("--port", "8000")));
     tester->setup(concurrent, packetsize);
     tester->start(-2);
-    printf ("Connect to %s for %d connections\n", addr.to_string().c_str(), concurrent);
+    printf("Connect to %s for %d connections\n", addr.to_string().c_str(), concurrent);
     for (int i=0; i<concurrent; i++) {
         tester->connect(addr);
     }
@@ -53,7 +53,7 @@ int client_main(const lightcone::CmdArg& args) {
         int packets = tester->packets;
         int timeouts = tester->timeouts;
         tester->packets = 0;
-        printf ("Connected: %04d. Timeouts: %04d. Packets: %d, Bandwidth: %lu bytes/sec\n", connects, timeouts, packets, packetsize * packets);
+        printf("Connected: %04d. Timeouts: %04d. Packets: %d, Bandwidth: %u bytes/sec\n", connects, timeouts, packets, (unsigned int)(packetsize * (size_t)packets));
     }
     tester->stop();
     delete tester;

@@ -13,11 +13,9 @@ Tester::Tester() : lightcone::NetEngine(&_lb) {
     packets = 0;
     timeouts = 0;
 }
-// -----------------------------------------------------------
 Tester::~Tester() {
     delete _sendbuf;
 }
-// -----------------------------------------------------------
 bool Tester::setup(int concurrent, size_t packet_size) {
     unsigned char* sendbuf = new unsigned char[packet_size];
     std::random_device rd;
@@ -32,22 +30,18 @@ bool Tester::setup(int concurrent, size_t packet_size) {
     _packet_size = packet_size;
     return true;
 }
-// -----------------------------------------------------------
 bool Tester::start(int threads) {
     _testing = true;
     return lightcone::NetEngine::start(threads);
 }
-// -----------------------------------------------------------
 void Tester::stop() {
     _testing = false;
     lightcone::NetEngine::stop();
 }
-// -----------------------------------------------------------
 bool Tester::cb_net_timeout(lightcone::Tcp* conn, uint64_t now) {
     timeouts++;
-    return true;
+    return false;
 }
-// -----------------------------------------------------------
 bool Tester::cb_net_refused(lightcone::Tcp* conn, uint64_t now) {
     if (_testing) {
         lightcone::Threads::usleep(100);
@@ -56,18 +50,15 @@ bool Tester::cb_net_refused(lightcone::Tcp* conn, uint64_t now) {
     }
     return true;
 }
-// -----------------------------------------------------------
-bool Tester::cb_net_accepted(lightcone::Tcp* conn, uint64_t now) {
+bool Tester::cb_net_accepted(lightcone::Tcp* conn, lightcone::Tcp* from, uint64_t now) {
     return true;
 }
-// -----------------------------------------------------------
 bool Tester::cb_net_opened(lightcone::Tcp* conn, uint64_t now) {
     connects++;
     conn->send(_sendbuf, _packet_size);
     packets++;
     return true;
 }
-// -----------------------------------------------------------
 bool Tester::cb_net_closed(lightcone::Tcp* conn, uint64_t now) {
     connects--;
     if (_testing) {
@@ -75,7 +66,6 @@ bool Tester::cb_net_closed(lightcone::Tcp* conn, uint64_t now) {
         connect(conn->get_remote());
     } return true;
 }
-// -----------------------------------------------------------
 bool Tester::cb_net_recv(lightcone::Tcp* conn, uint64_t now) {
     conn->recv([this, conn](const uint8_t* rbuf, size_t rlen) -> size_t {
         size_t consumed = 0;
@@ -89,7 +79,6 @@ bool Tester::cb_net_recv(lightcone::Tcp* conn, uint64_t now) {
     });
     return true;
 }
-// -----------------------------------------------------------
 bool Tester::cb_net_sent(lightcone::Tcp* conn, uint64_t now) {
     return true;
 }
