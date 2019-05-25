@@ -1,7 +1,3 @@
-env:
-  global:
-    # doxygen deploy key
-    - secure: "flbza9oQuQPTvve7NEhbgr4kq5LRNor5IMTQ9vrFDbJGSvcgAO5mHmtxIT1DlP/hjrt7WGUh1NLU2DV5aHvgV2YeGHP/JREVZFp+VTeU377/SPvn/4+Jjrl++oxh3rw+5cslLPXe8rDQtoErfnF7vmrtGFKk76uu+Ky0PDpM4UX4Pu2V6s3S2xV4+c2rDHza0AnE/AVZefyWQBz8x9ApGYQEFEkuzHpqrKASos175/LFQqs5ImDGkv1UP0w0jIfNyPqeu9LVb+Ue4VLoqbY2nYI9wQ47KXgmFwsGXU84Z1ebUq2H/LYmqQeTQdD5WCZqlFhoYW3zpeK5vrrNxyJezmic5s2o60QoOoXHt2VKVPL4lkLplg8rzY6YUAwuEWwTASXYWLTpF2lNUsAnNsg7xWivn9QGp8/eGheq2g/M9HOqY+T3827TeOGZ+IWncYr87x/bnv42DiOZDI03MJ3ffmTzt6h9CUHuQeqrGguurYFgGDSyCfBqsn4rHEDWDksbasX46c4AH6vDbYq7ZnVEAoFFX+dJuaq3Xc2zz+hwOCIbs9KtItE7zRr9tic+rBNuwEW6E/aLapnwSpVIyF2KjdgQgs3VS0IxPix/zqjpgwfZKxzpSjeP4kNfcn33xAYEstojcKWgiYiOrR/YZdyBj0LVvcADeRPujqMsr69Uo48="
 branches:
   only:
     - master
@@ -25,7 +21,6 @@ matrix:
         - (cd lightcone && ./configure && make lint && make && make test)
         - (cd example/benchmark && ./configure && make lint && make)
         - (cd example/httpd && ./configure && make lint && make)
-
     # OSX
     - language: cpp
       os: osx
@@ -34,27 +29,5 @@ matrix:
         - (cd lightcone && ./configure && make && make test)
         - (cd example/benchmark && ./configure && make)
         - (cd example/httpd && ./configure && make)
-
-    # doxygen
-    - language: cpp
-      os: linux
-      if: branch = master AND type = push
-      addons:
-        apt:
-          packages:
-            - graphviz
-            - doxygen
-      script:
-        - (cd lightcone && ./configure && make doc)
-      deploy:
-        provider: pages
-        github-token: $GITHUB_TOKEN
-        target-branch: gh-pages
-        skip-cleanup: true
-        keep-history: false
-        local-dir: lightcone/doxygen
-        verbose: true
-        on:
-          branch: master
 notifications:
   email: false
