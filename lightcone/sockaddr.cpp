@@ -86,10 +86,10 @@ int SockAddr::get_port() const {
 void SockAddr::set_port(int port) {
     switch (_family) {
     case AF_INET:
-        _addr.ip4.sin_port = htons(port);
+        _addr.ip4.sin_port = htons((uint16_t)port);
         break;
     case AF_INET6:
-        _addr.ip6.sin6_port = htons(port);
+        _addr.ip6.sin6_port = htons((uint16_t)port);
         break;
     }
 }

@@ -40,6 +40,9 @@ esac
 ##################################
 # Detect Host
 ##################################
+if grep -q Raspbian /etc/os-release; then
+  HOST=linux
+else
 case $(uname -a) in
   *raspberrypi* )
       HOST=linux
@@ -64,6 +67,7 @@ case $(uname -a) in
       exit
       ;;
 esac
+fi
 
 
 PLATFORM=${HOST}
